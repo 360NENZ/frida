@@ -84,6 +84,95 @@ jobs:
           path: dist/frida-client-linux-x86_64.tar.gz
           if-no-files-found: error
 
+  windows-x86_64:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: x64
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch build submodules
+        run: |
+          git submodule update --init releng
+          git -C releng submodule update --init
+          python tools/ensure-submodules.py frida-core frida-python frida-tools
+          python -m pip install setuptools
+      - name: Configure
+        run: >-
+          .\configure
+          --prefix="$Env:RUNNER_TEMP\frida"
+          --host=windows-x86_64
+          --enable-server
+          --enable-frida-python
+          --enable-frida-tools
+          --
+          -Dfrida-core:compiler_backend=disabled
+          -Dfrida-core:compat=disabled
+          -Dfrida-core:tests=disabled
+      - name: Compile
+        run: .\make
+      - name: Install
+        run: .\make install
+      - name: Package matched client
+        run: |
+          $prefix = "$Env:RUNNER_TEMP\frida"
+          $wheels = "$Env:RUNNER_TEMP\meshlink-client\wheels"
+          New-Item -ItemType Directory -Force $wheels | Out-Null
+          $Env:FRIDA_EXTENSION = "$prefix\lib\site-packages\frida\_frida.pyd"
+          if (-not (Test-Path $Env:FRIDA_EXTENSION)) {
+            throw "Missing matched Windows Python extension"
+          }
+          python -m pip wheel --no-deps -w $wheels .\subprojects\frida-python
+          python -m pip wheel --no-deps -w $wheels .\subprojects\frida-tools
+          python -m pip download --only-binary=:all: --dest $wheels `
+            'colorama>=0.2.7,<1' 'prompt-toolkit>=2,<4' `
+            'pygments>=2,<3' 'websockets>=13,<14' 'wcwidth>=0.2.5'
+          Copy-Item docs\matched-client-windows.md "$Env:RUNNER_TEMP\meshlink-client\README.md"
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path "$Env:RUNNER_TEMP\meshlink-client\*" `
+            -DestinationPath dist\meshlink-client-windows-x86_64.zip
+      - name: Test packaged client
+        run: |
+          $venv = "$Env:RUNNER_TEMP\client-smoke"
+          python -m venv $venv
+          $python = "$venv\Scripts\python.exe"
+          & $python -m pip install --no-index `
+            --find-links "$Env:RUNNER_TEMP\meshlink-client\wheels" frida frida-tools
+          if ($LASTEXITCODE -ne 0) { throw "Offline client installation failed" }
+          $server = Start-Process -FilePath "$Env:RUNNER_TEMP\frida\bin\frida-server.exe" `
+            -ArgumentList '-l', '127.0.0.1:39117' -WindowStyle Hidden -PassThru
+          try {
+            $connected = $false
+            for ($attempt = 0; $attempt -lt 20; $attempt++) {
+              & $python -c 'import frida; d = frida.get_device_manager().add_remote_device("127.0.0.1:39117"); assert d.enumerate_processes()'
+              if ($LASTEXITCODE -eq 0) { $connected = $true; break }
+              Start-Sleep -Seconds 1
+            }
+            if (-not $connected) { throw "Packaged client could not reach matched server" }
+            & "$venv\Scripts\frida-ps.exe" -H 127.0.0.1:39117
+            if ($LASTEXITCODE -ne 0) { throw "Packaged CLI failed" }
+          } finally {
+            Stop-Process -Id $server.Id -ErrorAction SilentlyContinue
+          }
+      - name: Upload matched client
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshlink-client-windows-x86_64
+          path: dist/meshlink-client-windows-x86_64.zip
+          if-no-files-found: error
+
   android-arm64:
     runs-on: ubuntu-latest
     steps:

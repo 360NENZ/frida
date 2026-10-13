@@ -130,6 +130,12 @@ jobs:
           $prefix = "$Env:RUNNER_TEMP\frida"
           $wheels = "$Env:RUNNER_TEMP\meshlink-client\wheels"
           New-Item -ItemType Directory -Force $wheels | Out-Null
+          $Env:MESON_SOURCE_ROOT = $Env:GITHUB_WORKSPACE
+          git -C subprojects/frida-python fetch --tags --depth=128 origin
+          git -C subprojects/frida-tools fetch --tags --depth=128 origin
+          $toolsBuild = (Resolve-Path build\subprojects\frida-tools).Path
+          New-Item -ItemType Junction -Path subprojects\frida-tools\build `
+            -Target $toolsBuild | Out-Null
           $Env:FRIDA_EXTENSION = "$prefix\lib\site-packages\frida\_frida.pyd"
           if (-not (Test-Path $Env:FRIDA_EXTENSION)) {
             throw "Missing matched Windows Python extension"

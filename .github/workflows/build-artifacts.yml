@@ -41,9 +41,9 @@ jobs:
       - name: Collect binaries
         run: |
           mkdir -p dist
-          cp build/subprojects/frida-core/server/frida-server dist/
-          cp build/subprojects/frida-core/lib/gadget/frida-gadget.so dist/
-          dist/frida-server --version
+          cp build/subprojects/frida-core/server/frida-server dist/meshlinkd
+          cp build/subprojects/frida-core/lib/gadget/frida-gadget.so dist/libmeshlink.so
+          dist/meshlinkd --version
       - name: Test matched remote client
         run: |
           build/subprojects/frida-core/server/frida-server -l 127.0.0.1:39117 &
@@ -66,6 +66,7 @@ jobs:
           test -n "$frida_dir"
           site_dir="${frida_dir%/frida}"
           cp "$GITHUB_WORKSPACE/docs/matched-client.md" README-client.md
+          mv bin/frida-server bin/meshlinkd
           tar -czf "$GITHUB_WORKSPACE/dist/frida-client-linux-x86_64.tar.gz" \
             bin "$site_dir/frida" "$site_dir/frida_tools" README-client.md
       - name: Upload binaries
@@ -73,8 +74,8 @@ jobs:
         with:
           name: frida-linux-x86_64
           path: |
-            dist/frida-server
-            dist/frida-gadget.so
+            dist/meshlinkd
+            dist/libmeshlink.so
           if-no-files-found: error
       - name: Upload matched client
         uses: actions/upload-artifact@v4
@@ -120,8 +121,8 @@ jobs:
       - name: Collect binaries
         run: |
           mkdir -p dist
-          cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/
-          cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/frida-gadget.so" dist/
+          cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/meshlinkd
+          cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/frida-gadget.so" dist/libmeshlink.so
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:

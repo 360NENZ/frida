@@ -1,0 +1,41 @@
+name: Build artifacts
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch build submodules
+        run: python3 tools/ensure-submodules.py frida-core
+      - name: Configure
+        run: >-
+          ./configure
+          --prefix="${{ runner.temp }}/frida"
+          --enable-server
+          --enable-gadget
+          --disable-frida-python
+          --disable-frida-tools
+          --
+          -Dfrida-core:compiler_backend=disabled
+          -Dfrida-core:compat=disabled
+      - name: Compile
+        run: make -j"$(nproc)"
+      - name: Collect binaries
+        run: |
+          mkdir -p dist
+          cp build/subprojects/frida-core/server/frida-server dist/
+          cp build/subprojects/frida-core/lib/gadget/frida-gadget.so dist/
+          dist/frida-server --version
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: frida-linux-x86_64
+          path: dist/
+          if-no-files-found: error

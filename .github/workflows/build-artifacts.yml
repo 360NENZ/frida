@@ -54,7 +54,8 @@ jobs:
           site_dir="${frida_dir%/frida}"
           for attempt in {1..20}; do
             if PYTHONPATH="$site_dir" python3 -c 'import frida; device = frida.get_device_manager().add_remote_device("127.0.0.1:39117"); assert device.enumerate_processes()'; then
-              exit 0
+              PYTHONPATH="$site_dir" python3 tools/smoke-rpc.py 127.0.0.1:39117 /bin/sleep 30
+              exit
             fi
             sleep 1
           done
@@ -169,6 +170,8 @@ jobs:
             if (-not $connected) { throw "Packaged client could not reach matched server" }
             & "$venv\Scripts\frida-ps.exe" -H 127.0.0.1:39117
             if ($LASTEXITCODE -ne 0) { throw "Packaged CLI failed" }
+            & $python tools\smoke-rpc.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
+            if ($LASTEXITCODE -ne 0) { throw "Packaged client RPC failed" }
           } finally {
             Stop-Process -Id $server.Id -ErrorAction SilentlyContinue
           }

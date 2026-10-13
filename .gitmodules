@@ -6,13 +6,13 @@
 	url = https://github.com/360NENZ/frida-core.git
 [submodule "frida-python"]
 	path = subprojects/frida-python
-	url = https://github.com/frida/frida-python.git
+	url = https://github.com/360NENZ/frida-python.git
 [submodule "frida-node"]
 	path = subprojects/frida-node
-	url = https://github.com/frida/frida-node.git
+	url = https://github.com/360NENZ/frida-node.git
 [submodule "frida-swift"]
 	path = subprojects/frida-swift
-	url = https://github.com/frida/frida-swift.git
+	url = https://github.com/360NENZ/frida-swift.git
 [submodule "frida-clr"]
 	path = subprojects/frida-clr
 	url = https://github.com/frida/frida-clr.git
@@ -24,7 +24,7 @@
 	url = https://github.com/frida/frida-tools.git
 [submodule "frida-go"]
 	path = subprojects/frida-go
-	url = https://github.com/frida/frida-go
+	url = https://github.com/360NENZ/frida-go.git
 [submodule "releng"]
 	path = releng
 	url = https://github.com/360NENZ/releng.git

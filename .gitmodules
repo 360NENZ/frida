@@ -1,6 +1,6 @@
 [submodule "frida-gum"]
 	path = subprojects/frida-gum
-	url = https://github.com/frida/frida-gum.git
+	url = https://github.com/360NENZ/frida-gum.git
 [submodule "frida-core"]
 	path = subprojects/frida-core
 	url = https://github.com/360NENZ/frida-core.git

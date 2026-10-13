@@ -118,9 +118,9 @@ jobs:
           --enable-frida-python
           --enable-frida-tools
           --
-          -Dfrida-core:compiler_backend=disabled
-          -Dfrida-core:compat=disabled
-          -Dfrida-core:tests=disabled
+          "-Dfrida-core:compiler_backend=disabled"
+          "-Dfrida-core:compat=disabled"
+          "-Dfrida-core:tests=disabled"
       - name: Compile
         run: .\make
       - name: Install

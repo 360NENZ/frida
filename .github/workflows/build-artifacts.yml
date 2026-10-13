@@ -39,3 +39,49 @@ jobs:
           name: frida-linux-x86_64
           path: dist/
           if-no-files-found: error
+
+  android-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch build submodules
+        run: python3 tools/ensure-submodules.py frida-core
+      - name: Set up NDK
+        id: ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r29
+          add-to-path: false
+      - name: Export NDK root
+        run: echo "ANDROID_NDK_ROOT=${{ steps.ndk.outputs.ndk-path }}" >> "$GITHUB_ENV"
+      - name: Configure
+        run: >-
+          ./configure
+          --prefix="${{ runner.temp }}/frida-android"
+          --host=android-arm64
+          --enable-server
+          --enable-gadget
+          --disable-frida-python
+          --disable-frida-tools
+          --
+          -Dlibdir=lib
+          -Dfrida-core:compiler_backend=disabled
+          -Dfrida-core:compat=disabled
+      - name: Compile
+        run: make -j2
+      - name: Install
+        run: make install
+      - name: Collect binaries
+        run: |
+          mkdir -p dist
+          cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/
+          cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/frida-gadget.so" dist/
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: frida-android-arm64
+          path: dist/
+          if-no-files-found: error

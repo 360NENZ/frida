@@ -13,31 +13,74 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fetch build submodules
-        run: python3 tools/ensure-submodules.py frida-core
+        run: python3 tools/ensure-submodules.py frida-core frida-python frida-tools
+      - name: Install Python development headers
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-dev
       - name: Configure
         run: >-
           ./configure
           --prefix="${{ runner.temp }}/frida"
           --enable-server
           --enable-gadget
-          --disable-frida-python
-          --disable-frida-tools
+          --enable-frida-python
+          --enable-frida-tools
           --
           -Dfrida-core:compiler_backend=disabled
           -Dfrida-core:compat=disabled
+          -Dfrida-core:tests=enabled
       - name: Compile
         run: make -j"$(nproc)"
+      - name: Test local agent and host session
+        run: |
+          build/subprojects/frida-core/tests/frida-tests -p /Agent/Script/load-and-receive-messages
+          build/subprojects/frida-core/tests/frida-tests -p /HostSession/Linux/backend
+      - name: Install
+        run: make install
       - name: Collect binaries
         run: |
           mkdir -p dist
           cp build/subprojects/frida-core/server/frida-server dist/
           cp build/subprojects/frida-core/lib/gadget/frida-gadget.so dist/
           dist/frida-server --version
+      - name: Test matched remote client
+        run: |
+          build/subprojects/frida-core/server/frida-server -l 127.0.0.1:39117 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          frida_dir="$(find "${{ runner.temp }}/frida/lib" -name '_frida.abi3.so' -printf '%h\n' -quit)"
+          test -n "$frida_dir"
+          site_dir="${frida_dir%/frida}"
+          for attempt in {1..20}; do
+            if PYTHONPATH="$site_dir" python3 -c 'import frida; device = frida.get_device_manager().add_remote_device("127.0.0.1:39117"); assert device.enumerate_processes()'; then
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1
+      - name: Package matched client
+        run: |
+          cd "${{ runner.temp }}/frida"
+          frida_dir="$(find lib -name '_frida.abi3.so' -printf '%h\n' -quit)"
+          test -n "$frida_dir"
+          site_dir="${frida_dir%/frida}"
+          cp "$GITHUB_WORKSPACE/docs/matched-client.md" README-client.md
+          tar -czf "$GITHUB_WORKSPACE/dist/frida-client-linux-x86_64.tar.gz" \
+            bin "$site_dir/frida" "$site_dir/frida_tools" README-client.md
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:
           name: frida-linux-x86_64
-          path: dist/
+          path: |
+            dist/frida-server
+            dist/frida-gadget.so
+          if-no-files-found: error
+      - name: Upload matched client
+        uses: actions/upload-artifact@v4
+        with:
+          name: frida-client-linux-x86_64
+          path: dist/frida-client-linux-x86_64.tar.gz
           if-no-files-found: error
 
   android-arm64:

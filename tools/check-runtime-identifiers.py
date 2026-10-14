@@ -10,6 +10,13 @@ LEGACY_MARKERS = (
     b"frida-context",
     b"frida-ctrl",
     b"frida-selinux-error-quark",
+    b"FridaDummyInputStream",
+    b"FridaVirtualInputStream",
+    b"FridaVirtualOutputStream",
+    b"FridaWebConnection",
+    b"FridaPortalClientLiveAgentSession",
+    b"FridaFileDescriptorGuardCloseListener",
+    b"FridaDirListCloaker",
 )
 
 

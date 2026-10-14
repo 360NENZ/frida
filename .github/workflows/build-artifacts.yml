@@ -30,12 +30,15 @@ jobs:
           -Dfrida-core:compiler_backend=disabled
           -Dfrida-core:compat=disabled
           -Dfrida-core:tests=enabled
+          -Dfrida-gum:tests=enabled
       - name: Compile
         run: make -j"$(nproc)"
       - name: Test local agent and host session
         run: |
           build/subprojects/frida-core/tests/frida-tests -p /Agent/Script/load-and-receive-messages
           build/subprojects/frida-core/tests/frida-tests -p /HostSession/Linux/backend
+          build/subprojects/frida-gum/tests/gum-tests -m slow \
+            -p '/GumJS/Script/CModule/cmodule_can_be_defined_with_toolchain#QJS'
       - name: Install
         run: make install
       - name: Collect binaries
@@ -57,7 +60,6 @@ jobs:
               PYTHONPATH="$site_dir" python3 tools/smoke-rpc.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-inspector.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-runtime-paths.py 127.0.0.1:39117 /bin/sleep 30
-              PYTHONPATH="$site_dir" python3 tools/smoke-cmodule.py 127.0.0.1:39117 /bin/sleep 30
               exit
             fi
             sleep 1

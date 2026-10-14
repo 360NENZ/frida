@@ -8,7 +8,7 @@ From the extracted archive in PowerShell:
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --no-index --find-links .\wheels frida frida-tools
+.\.venv\Scripts\python.exe -m pip install --pre --no-index --find-links .\wheels frida frida-tools
 .\.venv\Scripts\frida-ps.exe -H 127.0.0.1:39117
 ```
 

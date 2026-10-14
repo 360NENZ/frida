@@ -55,6 +55,7 @@ jobs:
           for attempt in {1..20}; do
             if PYTHONPATH="$site_dir" python3 -c 'import frida; device = frida.get_device_manager().add_remote_device("127.0.0.1:39117"); assert device.enumerate_processes()'; then
               PYTHONPATH="$site_dir" python3 tools/smoke-rpc.py 127.0.0.1:39117 /bin/sleep 30
+              PYTHONPATH="$site_dir" python3 tools/smoke-inspector.py 127.0.0.1:39117 /bin/sleep 30
               exit
             fi
             sleep 1
@@ -161,7 +162,7 @@ jobs:
           $venv = "$Env:RUNNER_TEMP\client-smoke"
           python -m venv $venv
           $python = "$venv\Scripts\python.exe"
-          & $python -m pip install --no-index `
+          & $python -m pip install --pre --no-index `
             --find-links "$Env:RUNNER_TEMP\meshlink-client\wheels" frida frida-tools
           if ($LASTEXITCODE -ne 0) { throw "Offline client installation failed" }
           $server = Start-Process -FilePath "$Env:RUNNER_TEMP\frida\bin\frida-server.exe" `
@@ -178,6 +179,8 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Packaged CLI failed" }
             & $python tools\smoke-rpc.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
             if ($LASTEXITCODE -ne 0) { throw "Packaged client RPC failed" }
+            & $python tools\smoke-inspector.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
+            if ($LASTEXITCODE -ne 0) { throw "Packaged client inspector failed" }
           } finally {
             Stop-Process -Id $server.Id -ErrorAction SilentlyContinue
           }

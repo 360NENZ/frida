@@ -29,6 +29,10 @@ LEGACY_MARKERS = (
     b"FridaThreadListCloaker",
     b"FridaFDListCloaker",
     b"FridaDirListFilter",
+    b"FridaProcessInvader",
+    b"FridaRpcClient",
+    b"FridaRpcPeer",
+    b"FridaPeerSocket",
 )
 
 

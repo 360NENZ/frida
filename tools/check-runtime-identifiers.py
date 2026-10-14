@@ -17,6 +17,18 @@ LEGACY_MARKERS = (
     b"FridaPortalClientLiveAgentSession",
     b"FridaFileDescriptorGuardCloseListener",
     b"FridaDirListCloaker",
+    b"FridaVirtualStream",
+    b"FridaAgentMessageTransmitter",
+    b"FridaBaseAgentSession",
+    b"FridaPortalClient",
+    b"FridaScriptEngine",
+    b"FridaExitMonitor",
+    b"FridaFileDescriptorGuard",
+    b"FridaForkMonitor",
+    b"FridaThreadCountCloaker",
+    b"FridaThreadListCloaker",
+    b"FridaFDListCloaker",
+    b"FridaDirListFilter",
 )
 
 

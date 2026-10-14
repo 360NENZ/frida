@@ -22,6 +22,17 @@ try:
             assert messages[0]["type"] == "error", (runtime, messages)
             assert "/meshlink/runtime/hexdump.js:" in messages[0]["stack"], (runtime, messages)
             script.unload()
+
+            messages.clear()
+            script = session.create_script(
+                "send({legacy: typeof Frida, version: Meshlink.version});", runtime=runtime
+            )
+            script.on("message", lambda message, data: messages.append(message))
+            script.load()
+            assert len(messages) == 1, (runtime, messages)
+            identity = messages[0]["payload"]
+            assert identity["legacy"] == "undefined" and identity["version"], (runtime, identity)
+            script.unload()
     finally:
         session.detach()
 finally:

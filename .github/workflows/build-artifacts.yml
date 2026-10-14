@@ -57,6 +57,7 @@ jobs:
               PYTHONPATH="$site_dir" python3 tools/smoke-rpc.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-inspector.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-runtime-paths.py 127.0.0.1:39117 /bin/sleep 30
+              PYTHONPATH="$site_dir" python3 tools/smoke-cmodule.py 127.0.0.1:39117 /bin/sleep 30
               exit
             fi
             sleep 1

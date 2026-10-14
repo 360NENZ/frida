@@ -7,6 +7,8 @@ LEGACY_MARKERS = (
     b"/_frida.js",
     b"frida-console-",
     b"re.frida.hostlink",
+    b"frida-context",
+    b"frida-ctrl",
 )
 
 

@@ -228,12 +228,12 @@ jobs:
           name: frida-agent-ios-arm64e
           path: ios-arm64e/
       - name: Sign universal frida-agent for iOS/arm64(e)
-        run: codesign -f -s "-" ios-arm64e/frida-agent.dylib
+        run: codesign -f -s "-" ios-arm64e/meshlink-agent.dylib
       - name: Assemble iOS assets
         run: |
           mkdir -p ios-assets/usr/bin ios-assets/usr/lib/frida-1.0
           mv frida-server-ios-universal ios-assets/usr/bin/frida-server
-          mv ios-arm64e/frida-agent.dylib ios-assets/usr/lib/frida-1.0/frida-agent.dylib
+          mv ios-arm64e/meshlink-agent.dylib ios-assets/usr/lib/frida-1.0/meshlink-agent.dylib
       - name: Upload iOS assets
         uses: actions/upload-artifact@v7
         with:
@@ -269,12 +269,12 @@ jobs:
           name: frida-agent-tvos-arm64
           path: tvos-arm64/
       - name: Prepare frida-agent for tvOS/arm64
-        run: codesign -f -s "-" tvos-arm64/frida-agent.dylib
+        run: codesign -f -s "-" tvos-arm64/meshlink-agent.dylib
       - name: Assemble tvOS assets
         run: |
           mkdir -p tvos-assets/usr/bin tvos-assets/usr/lib/frida-1.0
           mv tvos-arm64/frida-server tvos-assets/usr/bin/frida-server
-          mv tvos-arm64/frida-agent.dylib tvos-assets/usr/lib/frida-1.0/frida-agent.dylib
+          mv tvos-arm64/meshlink-agent.dylib tvos-assets/usr/lib/frida-1.0/meshlink-agent.dylib
       - name: Upload tvOS assets
         uses: actions/upload-artifact@v7
         with:
@@ -919,9 +919,9 @@ jobs:
           name: frida-core-emulation-windows
           path: |
             build/subprojects/frida-core/src/frida-helper.exe
-            build/subprojects/frida-core/lib/agent/frida-agent.dll
+            build/subprojects/frida-core/lib/agent/meshlink-agent.dll
             build/subprojects/frida-core/compat/frida-helper.exe
-            build/subprojects/frida-core/compat/frida-agent.dll
+            build/subprojects/frida-core/compat/meshlink-agent.dll
       - name: Upload Gum devkit
         uses: actions/upload-artifact@v7
         with:
@@ -1054,9 +1054,9 @@ jobs:
       - name: Configure
         run: |
           $helperModern = (Resolve-Path "emulation/src/frida-helper.exe").Path
-          $agentModern = (Resolve-Path "emulation/lib/agent/frida-agent.dll").Path
+          $agentModern = (Resolve-Path "emulation/lib/agent/meshlink-agent.dll").Path
           $helperLegacy = (Resolve-Path "emulation/compat/frida-helper.exe").Path
-          $agentLegacy = (Resolve-Path "emulation/compat/frida-agent.dll").Path
+          $agentLegacy = (Resolve-Path "emulation/compat/meshlink-agent.dll").Path
 
           .\configure `
             --prefix=$Env:FRIDA_PREFIX `
@@ -1572,7 +1572,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-agent-ios-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-agent.dylib
+          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/meshlink-agent.dylib
       - name: Upload frida-gadget
         if: matrix.arch != 'arm64'
         uses: actions/upload-artifact@v7
@@ -1717,7 +1717,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-agent-tvos-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-agent.dylib
+          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/meshlink-agent.dylib
       - name: Upload frida-gadget
         uses: actions/upload-artifact@v7
         with:

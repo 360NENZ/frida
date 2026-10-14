@@ -45,8 +45,6 @@ LEGACY_MARKERS = (
     b"FridaTransportBroker\x00",
     b"FridaPortalSession\x00",
     b"FridaBusSession\x00",
-    b"FridaAuthenticationService\x00",
-    b"FridaStaticAuthenticationService\x00",
     b"FridaNullAuthenticationService\x00",
     b"FridaUnauthorizedHostSession\x00",
 )

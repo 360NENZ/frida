@@ -49,6 +49,8 @@ jobs:
           cp build/subprojects/frida-core/server/frida-server dist/meshlinkd
           cp build/subprojects/frida-core/lib/gadget/meshlink-gadget.so dist/libmeshlink.so
           dist/meshlinkd --version
+      - name: Verify runtime identifiers
+        run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Test matched remote client
         run: |
           build/subprojects/frida-core/server/frida-server -l 127.0.0.1:39117 &
@@ -239,6 +241,8 @@ jobs:
           mkdir -p dist
           cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/meshlinkd
           cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/meshlink-gadget.so" dist/libmeshlink.so
+      - name: Verify runtime identifiers
+        run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Verify zymbiote exports
         run: |
           if grep -a -q 'frida_zymbiote_replacement_' dist/meshlinkd; then

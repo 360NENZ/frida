@@ -33,6 +33,7 @@ LEGACY_MARKERS = (
     b"FridaRpcClient",
     b"FridaRpcPeer",
     b"FridaPeerSocket",
+    b"Frida/",
 )
 
 

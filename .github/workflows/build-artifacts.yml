@@ -54,7 +54,7 @@ jobs:
         run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Locate generated identity literals
         if: failure()
-        run: rg -n -F '"Frida"' build/subprojects/frida-core -g '*.c' | head -80 || true
+        run: grep -R -n -F --include='*.c' '"Frida"' build/subprojects/frida-core | head -80 || true
       - name: Test matched remote client
         run: |
           build/subprojects/frida-core/server/frida-server -l 127.0.0.1:39117 &
@@ -250,7 +250,7 @@ jobs:
         run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Locate generated identity literals
         if: failure()
-        run: rg -n -F '"Frida"' build/subprojects/frida-core -g '*.c' | head -80 || true
+        run: grep -R -n -F --include='*.c' '"Frida"' build/subprojects/frida-core | head -80 || true
       - name: Verify zymbiote exports
         run: |
           if grep -a -q 'frida_zymbiote_replacement_' dist/meshlinkd; then

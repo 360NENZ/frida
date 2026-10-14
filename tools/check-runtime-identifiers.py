@@ -63,6 +63,8 @@ LEGACY_MARKERS = (
     b"lolcathost",
     b"FridaSctpConnection\x00",
     b"_frida_sctp_connection_",
+    b"FridaThreadSuspendMonitor",
+    b"FridaUnwindSitter",
 )
 
 

@@ -47,6 +47,15 @@ LEGACY_MARKERS = (
     b"FridaBusSession\x00",
     b"FridaNullAuthenticationService\x00",
     b"FridaUnauthorizedHostSession\x00",
+    b"FridaWebService\x00",
+    b"FridaWebServiceConnectionHandler\x00",
+    b"FridaWebServiceFlavor\x00",
+    b"FridaPortConflictBehavior\x00",
+    b"FridaDynamicInterfaceObserver\x00",
+    b"FridaDynamicInterface\x00",
+    b"FridaTunnelInterfaceObserver\x00",
+    b"FridaThreadIgnoreScope\x00",
+    b"FridaExitHandler\x00",
 )
 
 

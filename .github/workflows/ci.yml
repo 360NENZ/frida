@@ -918,9 +918,9 @@ jobs:
         with:
           name: frida-core-emulation-windows
           path: |
-            build/subprojects/frida-core/src/frida-helper.exe
+            build/subprojects/frida-core/src/meshlink-helper.exe
             build/subprojects/frida-core/lib/agent/meshlink-agent.dll
-            build/subprojects/frida-core/compat/frida-helper.exe
+            build/subprojects/frida-core/compat/meshlink-helper.exe
             build/subprojects/frida-core/compat/meshlink-agent.dll
       - name: Upload Gum devkit
         uses: actions/upload-artifact@v7
@@ -1053,9 +1053,9 @@ jobs:
           path: emulation/
       - name: Configure
         run: |
-          $helperModern = (Resolve-Path "emulation/src/frida-helper.exe").Path
+          $helperModern = (Resolve-Path "emulation/src/meshlink-helper.exe").Path
           $agentModern = (Resolve-Path "emulation/lib/agent/meshlink-agent.dll").Path
-          $helperLegacy = (Resolve-Path "emulation/compat/frida-helper.exe").Path
+          $helperLegacy = (Resolve-Path "emulation/compat/meshlink-helper.exe").Path
           $agentLegacy = (Resolve-Path "emulation/compat/meshlink-agent.dll").Path
 
           .\configure `

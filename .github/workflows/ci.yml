@@ -311,11 +311,11 @@ jobs:
       - name: Create universal frida-gadget for macOS
         run: |
           lipo \
-              macos-x86_64/frida-gadget.dylib \
-              macos-arm64e/frida-gadget.dylib \
+              macos-x86_64/meshlink-gadget.dylib \
+              macos-arm64e/meshlink-gadget.dylib \
               -create -output frida-gadget-macos-universal.dylib
           install_name_tool \
-              -id @executable_path/../Frameworks/FridaGadget.dylib \
+              -id @executable_path/../Frameworks/MeshlinkGadget.dylib \
               frida-gadget-macos-universal.dylib
           codesign \
               -f -s "$MACOS_CERTID" \
@@ -334,9 +334,9 @@ jobs:
           path: ios-arm64e/
       - name: Create universal frida-gadget for iOS
         run: |
-          mv ios-arm64e/frida-gadget.dylib frida-gadget-ios-universal.dylib
+          mv ios-arm64e/meshlink-gadget.dylib frida-gadget-ios-universal.dylib
           install_name_tool \
-              -id @executable_path/Frameworks/FridaGadget.dylib \
+              -id @executable_path/Frameworks/MeshlinkGadget.dylib \
               frida-gadget-ios-universal.dylib
           codesign \
               -f -s "$IOS_CERTID" \
@@ -368,11 +368,11 @@ jobs:
       - name: Create universal frida-gadget for iOS Simulator
         run: |
           lipo \
-              ios-x86_64-simulator/frida-gadget.dylib \
-              ios-arm64-simulator/frida-gadget.dylib \
+              ios-x86_64-simulator/meshlink-gadget.dylib \
+              ios-arm64-simulator/meshlink-gadget.dylib \
               -create -output frida-gadget-ios-simulator-universal.dylib
           install_name_tool \
-              -id @executable_path/Frameworks/FridaGadget.dylib \
+              -id @executable_path/Frameworks/MeshlinkGadget.dylib \
               frida-gadget-ios-simulator-universal.dylib
           codesign \
               -f -s "$IOS_CERTID" \
@@ -397,9 +397,9 @@ jobs:
       - name: Package frida-gadget for watchOS
         run: |
           for arch in arm64 arm64-simulator; do
-            cp watchos-$arch/frida-gadget.dylib frida-gadget-watchos-$arch.dylib
+            cp watchos-$arch/meshlink-gadget.dylib frida-gadget-watchos-$arch.dylib
             install_name_tool \
-                -id @executable_path/Frameworks/FridaGadget.dylib \
+                -id @executable_path/Frameworks/MeshlinkGadget.dylib \
                 frida-gadget-watchos-$arch.dylib
             codesign \
                 -f -s "$WATCHOS_CERTID" \
@@ -429,9 +429,9 @@ jobs:
       - name: Package frida-gadget for tvOS
         run: |
           for arch in arm64 arm64-simulator; do
-            cp tvos-$arch/frida-gadget.dylib frida-gadget-tvos-$arch.dylib
+            cp tvos-$arch/meshlink-gadget.dylib frida-gadget-tvos-$arch.dylib
             install_name_tool \
-                -id @executable_path/Frameworks/FridaGadget.dylib \
+                -id @executable_path/Frameworks/MeshlinkGadget.dylib \
                 frida-gadget-tvos-$arch.dylib
             codesign \
                 -f -s "$TVOS_CERTID" \
@@ -957,13 +957,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-windows-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/x86/frida-gadget.dll
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/x86/meshlink-gadget.dll
       - name: Upload 64-bit frida-gadget
         if: matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-windows-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/x86_64/frida-gadget.dll
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/x86_64/meshlink-gadget.dll
       - name: Package Python bindings
         run: |
           $Env:FRIDA_EXTENSION = "$Env:FRIDA_PREFIX\lib\site-packages\frida\_frida.pyd"
@@ -1114,7 +1114,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-windows-arm64
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/arm64/frida-gadget.dll
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/arm64/meshlink-gadget.dll
       - name: Package Python bindings
         run: |
           $Env:FRIDA_EXTENSION = "$Env:FRIDA_PREFIX\lib\site-packages\frida\_frida.pyd"
@@ -1254,7 +1254,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-macos-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/frida-gadget.dylib
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/meshlink-gadget.dylib
       - name: Package Python bindings
         run: |
           export FRIDA_EXTENSION=$(find "$FRIDA_PREFIX" -name _frida.abi3.so)
@@ -1401,13 +1401,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-linux-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/meshlink-gadget.so
       - name: Upload 64-bit frida-gadget
         if: ${{ contains(matrix.arch, '64') }}
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-linux-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/meshlink-gadget.so
       - name: Package Python bindings
         run: |
           export FRIDA_EXTENSION=$(find "$FRIDA_PREFIX" -name _frida.abi3.so)
@@ -1578,7 +1578,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-ios-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-gadget.dylib
+          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/meshlink-gadget.dylib
 
   frida-watchos:
     needs: [sdk-macos, sdk-watchos]
@@ -1633,7 +1633,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-watchos-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/frida-gadget.dylib
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/meshlink-gadget.dylib
 
   frida-tvos:
     needs: [sdk-macos, sdk-tvos]
@@ -1722,7 +1722,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-tvos-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/frida-gadget.dylib
+          path: ${{ env.FRIDA_PREFIX }}/usr/lib/frida-1.0/meshlink-gadget.dylib
 
   frida-android:
     needs: [sdk-linux, sdk-android-32, sdk-android-64]
@@ -1807,13 +1807,13 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-android-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/meshlink-gadget.so
       - name: Upload 64-bit frida-gadget
         if: ${{ contains(matrix.arch, '64') }}
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-android-${{ matrix.arch }}
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/meshlink-gadget.so
 
   frida-qnx:
     runs-on: ubuntu-latest
@@ -1882,7 +1882,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-qnx-armeabi
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/32/meshlink-gadget.so
 
   frida-prospero:
     runs-on: ubuntu-latest
@@ -1959,7 +1959,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: frida-gadget-prospero-x86_64
-          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/frida-gadget.so
+          path: ${{ env.FRIDA_PREFIX }}/lib/frida-1.0/64/meshlink-gadget.so
 
   frida-gum-none:
     needs: sdk-none

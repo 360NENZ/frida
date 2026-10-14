@@ -34,6 +34,11 @@ LEGACY_MARKERS = (
     b"FridaRpcPeer",
     b"FridaPeerSocket",
     b"Frida/",
+    b"FridaHostSession\x00",
+    b"FridaAgentSessionProvider\x00",
+    b"FridaAgentSession\x00",
+    b"FridaAgentController\x00",
+    b"FridaAgentMessageSink\x00",
 )
 
 
@@ -43,7 +48,7 @@ if len(sys.argv) < 2:
 for filename in sys.argv[1:]:
     path = Path(filename)
     contents = path.read_bytes()
-    remaining = [marker.decode("ascii") for marker in LEGACY_MARKERS if marker in contents]
+    remaining = [marker.decode("ascii").rstrip("\0") for marker in LEGACY_MARKERS if marker in contents]
     if remaining:
         raise SystemExit(f"{path}: legacy runtime identifiers remain: {', '.join(remaining)}")
 

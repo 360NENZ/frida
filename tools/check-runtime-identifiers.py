@@ -65,6 +65,8 @@ LEGACY_MARKERS = (
     b"_frida_sctp_connection_",
     b"FridaThreadSuspendMonitor",
     b"FridaUnwindSitter",
+    b"FridaFuture",
+    b"FridaPromise",
 )
 
 

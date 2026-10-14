@@ -61,6 +61,8 @@ LEGACY_MARKERS = (
     b"frida_context != null",
     b"Frida\x00",
     b"lolcathost",
+    b"FridaSctpConnection\x00",
+    b"_frida_sctp_connection_",
 )
 
 

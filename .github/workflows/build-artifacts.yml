@@ -16,6 +16,8 @@ jobs:
         run: python3 tools/ensure-submodules.py frida-gum frida-core frida-python frida-tools
       - name: Verify kernel control contract
         run: python3 tools/check-kernel-control.py
+      - name: Verify Darwin injection parameters
+        run: python3 tools/check-darwin-parameters.py
       - name: Install Python development headers
         run: |
           sudo apt-get update
@@ -215,7 +217,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: Fetch build submodules
-        run: python3 tools/ensure-submodules.py frida-core
+        run: python3 tools/ensure-submodules.py frida-gum frida-core
+      - name: Verify Darwin injection parameters
+        run: python3 tools/check-darwin-parameters.py
       - name: Set up NDK
         id: ndk
         uses: nttld/setup-ndk@v1

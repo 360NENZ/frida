@@ -59,6 +59,8 @@ LEGACY_MARKERS = (
     b"FridaPeerSessionDescription\x00",
     b"FridaPeerSetup\x00",
     b"frida_context != null",
+    b"Frida\x00",
+    b"lolcathost",
 )
 
 

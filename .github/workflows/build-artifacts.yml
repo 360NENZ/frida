@@ -82,6 +82,7 @@ jobs:
           tar -czf "$GITHUB_WORKSPACE/dist/frida-client-linux-x86_64.tar.gz" \
             bin "$site_dir/frida" "$site_dir/frida_tools" README-client.md
       - name: Upload binaries
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frida-linux-x86_64
@@ -253,6 +254,7 @@ jobs:
           grep -a -q 'relay_zymbiote_replacement_setargv0' dist/meshlinkd
           grep -a -q 'relay_zymbiote_replacement_setcontext' dist/meshlinkd
       - name: Upload binaries
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: frida-android-arm64

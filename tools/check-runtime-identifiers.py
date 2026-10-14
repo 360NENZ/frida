@@ -67,6 +67,7 @@ LEGACY_MARKERS = (
     b"FridaUnwindSitter",
     b"FridaFuture",
     b"FridaPromise",
+    b"org.tools.bridge.Gadget",
 )
 
 

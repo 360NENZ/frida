@@ -39,6 +39,16 @@ LEGACY_MARKERS = (
     b"FridaAgentSession\x00",
     b"FridaAgentController\x00",
     b"FridaAgentMessageSink\x00",
+    b"FridaGadgetSession\x00",
+    b"FridaChannel\x00",
+    b"FridaServiceSession\x00",
+    b"FridaTransportBroker\x00",
+    b"FridaPortalSession\x00",
+    b"FridaBusSession\x00",
+    b"FridaAuthenticationService\x00",
+    b"FridaStaticAuthenticationService\x00",
+    b"FridaNullAuthenticationService\x00",
+    b"FridaUnauthorizedHostSession\x00",
 )
 
 

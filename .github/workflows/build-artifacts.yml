@@ -141,10 +141,12 @@ jobs:
           if (-not (Test-Path $Env:FRIDA_EXTENSION)) {
             throw "Missing matched Windows Python extension"
           }
-          $Env:FRIDA_VERSION = (& "$prefix\bin\frida-server.exe" --version).Trim()
-          if ($LASTEXITCODE -ne 0 -or $Env:FRIDA_VERSION -notmatch '^\d+\.\d+\.\d+$') {
+          $versionOutput = (& "$prefix\bin\frida-server.exe" --version 2>&1) -join ' '
+          Write-Host "Built server version: $versionOutput"
+          if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch '\d+\.\d+\.\d+') {
             throw "Could not determine the built server version"
           }
+          $Env:FRIDA_VERSION = $Matches[0]
           python -m pip wheel --no-deps -w $wheels .\subprojects\frida-python
           python -m pip wheel --no-deps -w $wheels .\subprojects\frida-tools
           python -m pip download --only-binary=:all: --dest $wheels `

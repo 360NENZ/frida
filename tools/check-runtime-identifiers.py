@@ -56,6 +56,9 @@ LEGACY_MARKERS = (
     b"FridaTunnelInterfaceObserver\x00",
     b"FridaThreadIgnoreScope\x00",
     b"FridaExitHandler\x00",
+    b"FridaPeerSessionDescription\x00",
+    b"FridaPeerSetup\x00",
+    b"frida_context != null",
 )
 
 

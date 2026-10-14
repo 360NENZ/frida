@@ -56,6 +56,7 @@ jobs:
             if PYTHONPATH="$site_dir" python3 -c 'import frida; device = frida.get_device_manager().add_remote_device("127.0.0.1:39117"); assert device.enumerate_processes()'; then
               PYTHONPATH="$site_dir" python3 tools/smoke-rpc.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-inspector.py 127.0.0.1:39117 /bin/sleep 30
+              PYTHONPATH="$site_dir" python3 tools/smoke-runtime-paths.py 127.0.0.1:39117 /bin/sleep 30
               exit
             fi
             sleep 1
@@ -181,6 +182,8 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Packaged client RPC failed" }
             & $python tools\smoke-inspector.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
             if ($LASTEXITCODE -ne 0) { throw "Packaged client inspector failed" }
+            & $python tools\smoke-runtime-paths.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
+            if ($LASTEXITCODE -ne 0) { throw "Packaged client runtime paths failed" }
           } finally {
             Stop-Process -Id $server.Id -ErrorAction SilentlyContinue
           }

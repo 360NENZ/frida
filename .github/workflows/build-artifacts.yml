@@ -233,6 +233,14 @@ jobs:
           mkdir -p dist
           cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/meshlinkd
           cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/frida-gadget.so" dist/libmeshlink.so
+      - name: Verify zymbiote exports
+        run: |
+          if grep -a -q 'frida_zymbiote_replacement_' dist/meshlinkd; then
+            echo "Legacy zymbiote export remains in server"
+            exit 1
+          fi
+          grep -a -q 'relay_zymbiote_replacement_setargv0' dist/meshlinkd
+          grep -a -q 'relay_zymbiote_replacement_setcontext' dist/meshlinkd
       - name: Upload binaries
         uses: actions/upload-artifact@v4
         with:

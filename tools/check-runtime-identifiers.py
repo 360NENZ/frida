@@ -9,6 +9,7 @@ LEGACY_MARKERS = (
     b"re.frida.hostlink",
     b"frida-context",
     b"frida-ctrl",
+    b"frida-selinux-error-quark",
 )
 
 

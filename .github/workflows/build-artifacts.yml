@@ -143,10 +143,10 @@ jobs:
           }
           $versionOutput = (& "$prefix\bin\frida-server.exe" --version 2>&1) -join ' '
           Write-Host "Built server version: $versionOutput"
-          if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch '\d+\.\d+\.\d+') {
+          if ($LASTEXITCODE -ne 0 -or $versionOutput -notmatch '^\d+\.\d+\.\d+(?:-dev\.\d+)?$') {
             throw "Could not determine the built server version"
           }
-          $Env:FRIDA_VERSION = $Matches[0]
+          $Env:FRIDA_VERSION = $versionOutput.Replace('-dev.', '.dev')
           python -m pip wheel --no-deps -w $wheels .\subprojects\frida-python
           python -m pip wheel --no-deps -w $wheels .\subprojects\frida-tools
           python -m pip download --only-binary=:all: --dest $wheels `

@@ -78,6 +78,8 @@ LEGACY_MARKERS = (
     b"Frida.",
     b"-isystem /frida",
     b"FRIDA_V8_EXTRA_FLAGS",
+    b"../subprojects/frida-core/",
+    b"../subprojects/frida-gum/",
 )
 
 

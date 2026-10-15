@@ -7,6 +7,13 @@ on:
 jobs:
   linux-x86_64:
     runs-on: ubuntu-latest
+    env:
+      CFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
+        -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
+      CXXFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
+        -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -220,6 +227,13 @@ jobs:
 
   android-arm64:
     runs-on: ubuntu-latest
+    env:
+      CFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
+        -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
+      CXXFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
+        -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

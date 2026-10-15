@@ -74,6 +74,7 @@ LEGACY_MARKERS = (
     b"FridaInjectorPayloadId",
     b"FridaPortalMembershipId",
     b"FridaServiceSessionId",
+    b"Frida.",
 )
 
 

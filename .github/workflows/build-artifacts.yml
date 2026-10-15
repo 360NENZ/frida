@@ -16,6 +16,8 @@ jobs:
         run: python3 tools/ensure-submodules.py frida-gum frida-core frida-python frida-tools
       - name: Verify kernel control contract
         run: python3 tools/check-kernel-control.py
+      - name: Test Valac task name rewriter
+        run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Verify Darwin injection parameters
         run: python3 tools/check-darwin-parameters.py
       - name: Install Python development headers
@@ -127,6 +129,8 @@ jobs:
           git -C releng submodule update --init
           python tools/ensure-submodules.py frida-core frida-python frida-tools
           python -m pip install setuptools
+      - name: Test Valac task name rewriter
+        run: python -m unittest releng.tests.test_neutral_valac
       - name: Configure
         run: >-
           .\configure
@@ -220,6 +224,8 @@ jobs:
         run: python3 tools/ensure-submodules.py frida-gum frida-core
       - name: Verify Darwin injection parameters
         run: python3 tools/check-darwin-parameters.py
+      - name: Test Valac task name rewriter
+        run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Set up NDK
         id: ndk
         uses: nttld/setup-ndk@v1

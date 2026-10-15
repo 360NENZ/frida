@@ -37,6 +37,15 @@ jobs:
           fetch-depth: 0
       - name: Fetch build submodules
         run: python3 tools/ensure-submodules.py frida-gum frida-core frida-python frida-tools
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: subprojects/frida-core/src/compiler/go.mod
+          cache-dependency-path: subprojects/frida-core/src/compiler/go.sum
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Verify kernel control contract
         run: python3 tools/check-kernel-control.py
       - name: Verify barebone x86 shim ABI
@@ -72,7 +81,7 @@ jobs:
           --enable-frida-python
           --enable-frida-tools
           --
-          -Dfrida-core:compiler_backend=disabled
+          -Dfrida-core:compiler_backend=enabled
           -Dfrida-core:compat=disabled
           -Dfrida-core:tests=enabled
           -Dfrida-gum:tests=enabled
@@ -87,6 +96,8 @@ jobs:
             -p '/GumJS/Script/CModule/cmodule_can_be_defined_with_toolchain#QJS'
           build/subprojects/frida-gum/tests/gum-tests -m slow \
             -p '/GumJS/Script/CModule/cmodule_can_be_defined_with_toolchain#V8'
+          build/subprojects/frida-core/tests/frida-tests -m slow -p /Compiler/Performance/build-simple-agent
+          build/subprojects/frida-core/tests/frida-tests -m slow -p /Compiler/LanguageServer/complete-simple-agent
       - name: Install
         run: make install
       - name: Collect binaries

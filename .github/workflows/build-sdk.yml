@@ -2,6 +2,10 @@ name: Build SDK archives
 
 on:
   workflow_call:
+    inputs:
+      windows_only:
+        type: boolean
+        default: false
   workflow_dispatch:
 
 permissions:
@@ -9,6 +13,7 @@ permissions:
 
 jobs:
   linux-x86_64:
+    if: ${{ !inputs.windows_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
@@ -35,6 +40,7 @@ jobs:
           if-no-files-found: error
 
   android-arm64:
+    if: ${{ !inputs.windows_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
@@ -86,12 +92,12 @@ jobs:
           python -m pip install setuptools
       - name: Build SDK
         shell: pwsh
-        run: python releng/deps.py build --host windows-x86_64-md
+        run: python releng/deps.py build --host windows-x86_64-mt
         env:
           FRIDA_DEPS: ${{ runner.temp }}\deps
       - name: Upload SDK
         uses: actions/upload-artifact@v4
         with:
-          name: meshlink-sdk-windows-x86_64-md
-          path: ${{ runner.temp }}\deps\sdk-windows-x86_64-md.tar.xz
+          name: meshlink-sdk-windows-x86_64-mt
+          path: ${{ runner.temp }}\deps\sdk-windows-x86_64-mt.tar.xz
           if-no-files-found: error

@@ -8,11 +8,17 @@ on:
         description: Build SDK archives
         type: boolean
         default: false
+      sdk_windows_only:
+        description: Build only the Windows SDK
+        type: boolean
+        default: false
 
 jobs:
   sdk:
     if: ${{ inputs.sdk }}
     uses: ./.github/workflows/build-sdk.yml
+    with:
+      windows_only: ${{ inputs.sdk_windows_only }}
 
   linux-x86_64:
     if: ${{ !inputs.sdk }}

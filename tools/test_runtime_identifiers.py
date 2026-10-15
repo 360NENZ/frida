@@ -14,8 +14,9 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
     def test_detects_unlisted_runtime_strings(self):
         remaining = checker.remaining_identifiers(
             b"meshlink\x00frida\x00FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa\x00"
-            b"FRIDA_1.0\x00/home/oleavr/src/frida-core/agent\x00"
+            b"FRIDA_1.0\x00/home/oleavr/src/frida-core/agent\x00js-event-loop\x00"
         )
+        self.assertIn("js-event-loop", remaining)
         self.assertIn("frida", remaining)
         self.assertIn("FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa", remaining)
         self.assertIn("FRIDA_1.0", remaining)

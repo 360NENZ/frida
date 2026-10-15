@@ -1,3 +1,4 @@
+import re
 import sys
 from pathlib import Path
 
@@ -87,6 +88,11 @@ for filename in sys.argv[1:]:
     path = Path(filename)
     contents = path.read_bytes()
     remaining = [marker.decode("ascii").rstrip("\0") for marker in LEGACY_MARKERS if marker in contents]
+    remaining += sorted(
+        match.decode("ascii").rstrip("\0") for match in set(
+            re.findall(rb"(?<![A-Za-z0-9_])(?:Frida[A-Z][A-Za-z0-9_]*|FRIDA_[A-Z0-9_]+)\x00", contents)
+        )
+    )
     if remaining:
         raise SystemExit(f"{path}: legacy runtime identifiers remain: {', '.join(remaining)}")
 

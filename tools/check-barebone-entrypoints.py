@@ -84,4 +84,26 @@ assert (
 )
 assert not re.search(r"\bfrida_kext_(?:start|stop)\b", macos)
 
+winnt_asm_symbols = {
+    "meshlink_winnt_run_on_stack",
+    "meshlink_winnt_fault_vector",
+    "meshlink_winnt_fault_vector_chain",
+    "meshlink_winnt_fault_vector_control",
+    "meshlink_winnt_fault_vector_onward",
+    "meshlink_winnt_fault_vector_end",
+    "meshlink_winnt_fault_thunk",
+}
+assert set(re.findall(r"(?m)^\.global (meshlink_winnt_[a-z_]+)$", winnt)) == winnt_asm_symbols
+assert set(re.findall(r"(?m)^(meshlink_winnt_[a-z_]+):$", winnt)) == winnt_asm_symbols
+assert all(
+    f"static {name}: u8;" in winnt
+    for name in winnt_asm_symbols if "fault_vector" in name
+)
+assert "fn meshlink_winnt_fault_thunk();" in winnt
+assert "static mut meshlink_winnt_fault_stacks:" in winnt
+assert "adrp x17, meshlink_winnt_fault_stacks" in winnt
+assert "extern \"C\" fn meshlink_winnt_on_fault(" in winnt
+assert "bl meshlink_winnt_on_fault" in winnt
+assert not re.search(r"\bfrida_winnt_[a-z_]+\b", winnt)
+
 print(f"Barebone entrypoints: Linux range arguments and {len(rust_symbols)} XNU constants match")

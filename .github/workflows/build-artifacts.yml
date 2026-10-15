@@ -75,6 +75,7 @@ jobs:
               PYTHONPATH="$site_dir" python3 tools/smoke-inspector.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-runtime-paths.py 127.0.0.1:39117 /bin/sleep 30
               PYTHONPATH="$site_dir" python3 tools/smoke-cmodule.py 127.0.0.1:39117 /bin/sleep 30
+              PYTHONPATH="$site_dir" python3 tools/smoke-cmodule.py --toolchain internal 127.0.0.1:39117 /bin/sleep 30
               exit
             fi
             sleep 1
@@ -205,6 +206,8 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "Packaged client inspector failed" }
             & $python tools\smoke-runtime-paths.py 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
             if ($LASTEXITCODE -ne 0) { throw "Packaged client runtime paths failed" }
+            & $python tools\smoke-cmodule.py --toolchain internal 127.0.0.1:39117 $python -c 'import time; time.sleep(30)'
+            if ($LASTEXITCODE -ne 0) { throw "Packaged client internal CModule failed" }
           } finally {
             Stop-Process -Id $server.Id -ErrorAction SilentlyContinue
           }

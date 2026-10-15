@@ -2285,7 +2285,7 @@ jobs:
       - name: Build agent
         working-directory: subprojects/frida-core/src/barebone/agent/linux
         run: >-
-          make frida-agent-prelinked.o.bin
+          make meshlink-agent-prelinked.o.bin
           ARCH=${{ matrix.kernel_arch }}
           BITS=${{ matrix.bits }}
           FRIDA_SDK=${{ runner.workspace }}/sdk-none-${{ matrix.arch }}-softfloat_nopic
@@ -2295,20 +2295,20 @@ jobs:
           AGENT_OBJCOPY=${{ matrix.toolprefix }}objcopy
         env:
           GUMJS_DEVKIT_DIR: ${{ runner.workspace }}/gumjs-devkit
-      # Everything the module needs from the kernel goes through frida-kmod.c, and
+      # Everything the module needs from the kernel goes through meshlink-kmod.c, and
       # everything the kernel may see of us is the two entry points it calls. Both
       # have broken before: a libc whose lock stubs collided with ours, and a devkit
       # built against a different libc leaving its errno behind.
       - name: Check the prelink
         working-directory: subprojects/frida-core/src/barebone/agent/linux
         run: |
-          undefined=$(${{ matrix.toolprefix }}nm --undefined-only frida-agent-prelinked.o.bin \
+          undefined=$(${{ matrix.toolprefix }}nm --undefined-only meshlink-agent-prelinked.o.bin \
             | awk '{ print $2 }' | grep -v '^meshlink_kmod_' || true)
           if [ -n "$undefined" ]; then
             echo "Undefined beyond the kmod glue:" $undefined
             exit 1
           fi
-          globals=$(${{ matrix.toolprefix }}nm --defined-only --extern-only frida-agent-prelinked.o.bin \
+          globals=$(${{ matrix.toolprefix }}nm --defined-only --extern-only meshlink-agent-prelinked.o.bin \
             | awk '{ print $3 }' | sort | paste -sd' ')
           if [ "$globals" != "$EXPECTED_GLOBALS" ]; then
             echo "Global symbols beyond the entry points:" $globals
@@ -2324,8 +2324,8 @@ jobs:
         if: matrix.kernel_arch == 'x86'
         working-directory: subprojects/frida-core/src/barebone/agent/linux
         run: |
-          if objdump -d frida-agent-prelinked.o.bin | grep -q notrack; then
-            objdump -d frida-agent-prelinked.o.bin | grep -B 2 notrack
+          if objdump -d meshlink-agent-prelinked.o.bin | grep -q notrack; then
+            objdump -d meshlink-agent-prelinked.o.bin | grep -B 2 notrack
             exit 1
           fi
 

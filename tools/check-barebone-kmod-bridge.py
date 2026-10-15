@@ -3,7 +3,7 @@ import re
 
 
 root = Path(__file__).resolve().parent.parent / "subprojects/frida-core/src/barebone/agent"
-linux = (root / "linux/frida-kmod.c").read_text(encoding="utf-8")
+linux = (root / "linux/meshlink-kmod.c").read_text(encoding="utf-8")
 macos = (root / "macos/frida-kext.c").read_text(encoding="utf-8")
 kmod = (root / "src/linux/kmod.rs").read_text(encoding="utf-8")
 hostlink = (root / "src/hostlink_chardev.rs").read_text(encoding="utf-8")

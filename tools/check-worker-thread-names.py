@@ -4,6 +4,8 @@ from pathlib import Path
 root = Path(__file__).resolve().parent.parent / "subprojects/frida-core"
 prospero = (root / "src/prospero/binjector.vala").read_text(encoding="utf-8")
 kernel = (root / "src/barebone/agent/linux/meshlink-kmod.c").read_text(encoding="utf-8")
+native = (root / "src/barebone/agent/src/linux/native.rs").read_text(encoding="utf-8")
+name_module = (root / "src/barebone/agent/src/linux/thread_name.rs").read_text(encoding="utf-8")
 main_glue = (root / "src/frida-glue.c").read_text(encoding="utf-8")
 container = (root / "src/agent-container.vala").read_text(encoding="utf-8")
 
@@ -16,6 +18,10 @@ assert '"op-worker"' not in kernel
 assert "get_random_bytes (&nonce, sizeof (nonce))" in kernel
 assert kernel.count('kthread_run (') == 2
 assert kernel.count('"%s", name)') == 2
+assert 'c"meshlink-worker"' not in native
+assert "make_thread_name(" in native
+assert "SEQUENCE.fetch_add(1, Ordering::Relaxed)" in name_module
+assert "name.as_ptr().cast()" in native
 
 assert '"main-worker"' not in main_glue
 assert "thread_name[15] = '\\0';" in main_glue

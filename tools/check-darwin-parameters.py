@@ -49,7 +49,10 @@ assert 'Environment.set_thread_name ("net-io-%u".printf (listen_port))' in gadge
 assert 'Environment.set_thread_name ("net-io-unix")' in gadget
 assert r'/^net-io-(\d+)$/.match (name, 0, out info)' in fruity_injector
 assert "rpc-listener-" not in gadget and "rpc-listener-" not in fruity_injector
-assert 'g_thread_new ("io-worker", run_worker_loop, NULL)' in gadget_glue
+assert 'worker_name = g_uuid_string_random ();' in gadget_glue
+assert "worker_name[15] = '\\0';" in gadget_glue
+assert 'g_thread_new (worker_name, run_worker_loop, NULL)' in gadget_glue
+assert '"io-worker"' not in gadget_glue
 assert '"rpc-worker"' not in gadget_glue
 
 code_segment = (ROOT / "subprojects/frida-gum/gum/backend-darwin/gumcodesegment-darwin.c").read_text(encoding="utf-8")

@@ -45,6 +45,8 @@ jobs:
         run: python3 tools/check-barebone-kmod-bridge.py
       - name: Verify barebone entrypoints
         run: python3 tools/check-barebone-entrypoints.py
+      - name: Verify barebone assembly symbols
+        run: python3 tools/check-barebone-asm-symbols.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Verify Darwin injection parameters

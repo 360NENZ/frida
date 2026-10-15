@@ -1,4 +1,6 @@
 import sys
+import re
+from pathlib import Path
 
 import frida
 
@@ -33,6 +35,14 @@ try:
             identity = messages[0]["payload"]
             assert identity["legacy"] == "undefined" and identity["version"], (runtime, identity)
             script.unload()
+
+        if sys.platform == "linux":
+            maps = Path(f"/proc/{pid}/maps").read_text(encoding="utf-8")
+            assert not re.search(r"/memfd:runtime-(?:32|64|arm|arm64)\.so", maps)
+            assert re.search(
+                r"/memfd:[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}-(?:32|64)\.so",
+                maps,
+            ), "Expected a session-specific agent memfd"
     finally:
         session.detach()
 finally:

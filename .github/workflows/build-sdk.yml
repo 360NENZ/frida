@@ -1,6 +1,7 @@
 name: Build SDK archives
 
 on:
+  workflow_call:
   workflow_dispatch:
 
 permissions:

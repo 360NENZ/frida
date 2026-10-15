@@ -3,9 +3,19 @@ name: Build artifacts
 on:
   push:
   workflow_dispatch:
+    inputs:
+      sdk:
+        description: Build SDK archives
+        type: boolean
+        default: false
 
 jobs:
+  sdk:
+    if: ${{ inputs.sdk }}
+    uses: ./.github/workflows/build-sdk.yml
+
   linux-x86_64:
+    if: ${{ !inputs.sdk }}
     runs-on: ubuntu-latest
     env:
       CFLAGS: >-
@@ -115,6 +125,7 @@ jobs:
           if-no-files-found: error
 
   windows-x86_64:
+    if: ${{ !inputs.sdk }}
     runs-on: windows-latest
     defaults:
       run:
@@ -226,6 +237,7 @@ jobs:
           if-no-files-found: error
 
   android-arm64:
+    if: ${{ !inputs.sdk }}
     runs-on: ubuntu-latest
     env:
       CFLAGS: >-

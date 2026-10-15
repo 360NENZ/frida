@@ -6,6 +6,7 @@ workspace = Path(__file__).resolve().parent.parent
 root = workspace / "subprojects/frida-core/src/barebone/agent"
 linux = (root / "linux/meshlink-kmod.c").read_text(encoding="utf-8")
 macos = (root / "macos/frida-kext.c").read_text(encoding="utf-8")
+macos_readme = (root / "macos/README.md").read_text(encoding="utf-8")
 rust = (root / "src/lib.rs").read_text(encoding="utf-8")
 xnu = (root / "src/xnu.rs").read_text(encoding="utf-8")
 winnt = (root / "src/winnt.rs").read_text(encoding="utf-8")
@@ -39,7 +40,7 @@ assert re.search(
 )
 assert rust.count("pub extern \"C\" fn meshlink_agent_start(own_base: u64, own_size: u64)") == 2
 assert "extern int meshlink_agent_start (uint64_t own_base, uint64_t own_size);" in macos
-assert "meshlink_agent_start (frida_own_base, frida_own_size)" in macos
+assert "meshlink_agent_start (meshlink_own_base, meshlink_own_size)" in macos
 
 for name in ("meshlink_agent_start", "meshlink_agent_stop"):
     assert name in makefile.split("ENTRY_POINTS :=", 1)[1].split("\n", 1)[0]
@@ -83,6 +84,16 @@ assert (
     in macos
 )
 assert not re.search(r"\bfrida_kext_(?:start|stop)\b", macos)
+assert not re.search(r"\b(?:frida_|FRIDA_)[A-Za-z_0-9]+\b", macos)
+for operation in ("open", "close", "read", "write", "ioctl"):
+    name = f"meshlink_dev_{operation}"
+    assert f".d_{operation} = {name}" in macos
+    assert re.search(rf"(?m)^{name} \(", macos)
+for macro in ("MESHLINK_IOC_SET_ADDR", "MESHLINK_IOC_START", "MESHLINK_IOC_GET_IMAGE"):
+    assert f"#define {macro} " in macos
+assert "MESHLINK_IOC_SET_ADDR" in macos_readme
+assert "MESHLINK_IOC_START" in macos_readme
+assert "MeshlinkAddrRequest" in macos_readme
 
 winnt_asm_symbols = {
     "meshlink_winnt_run_on_stack",

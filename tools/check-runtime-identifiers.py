@@ -91,6 +91,7 @@ for filename in sys.argv[1:]:
     remaining += sorted(
         match.decode("ascii").rstrip("\0") for match in set(
             re.findall(rb"(?<![A-Za-z0-9_])(?:Frida[A-Z][A-Za-z0-9_]*|FRIDA_[A-Z0-9_]+)\x00", contents)
+            + re.findall(rb"(?<![A-Za-z0-9_])frida(?:-[a-z0-9]+)*-error-quark\x00", contents)
         )
     )
     if remaining:

@@ -823,7 +823,7 @@ jobs:
 
   package-barebone-agent:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: frida-barebone-agent-blob
+    needs: meshlink-barebone-agent-blob
     strategy:
       matrix:
         flavor: [win9x-x86, winnt-x86, winnt-x86_64, winnt-arm64, xnu-arm64, linux-x86,
@@ -836,11 +836,11 @@ jobs:
       - name: Package barebone agent
         uses: ./.github/actions/package-artifact-file
         with:
-          name: frida-barebone-agent-${{ matrix.flavor }}
+          name: meshlink-barebone-agent-${{ matrix.flavor }}
 
   package-barebone-agent-kext:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: frida-barebone-agent-kext
+    needs: meshlink-barebone-agent-kext
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
@@ -848,7 +848,7 @@ jobs:
       - name: Package barebone agent kext
         uses: ./.github/actions/package-artifact-files-as-tarball
         with:
-          name: frida-barebone-agent-xnu-kext-arm64e
+          name: meshlink-barebone-agent-xnu-kext-arm64e
 
   frida-windows-intel:
     needs: sdk-windows
@@ -2077,7 +2077,7 @@ jobs:
           name: frida-gumjs-devkit-macos-arm64e-kernel
           path: subprojects/frida-gum/build/bindings/gumjs/devkit/
 
-  frida-barebone-agent-kext:
+  meshlink-barebone-agent-kext:
     needs: frida-gum-macos-kernel
     runs-on: macos-latest
     steps:
@@ -2113,10 +2113,10 @@ jobs:
       - name: Upload agent
         uses: actions/upload-artifact@v7
         with:
-          name: frida-barebone-agent-xnu-kext-arm64e
-          path: subprojects/frida-core/src/barebone/agent/macos/frida-agent.kext
+          name: meshlink-barebone-agent-xnu-kext-arm64e
+          path: subprojects/frida-core/src/barebone/agent/macos/meshlink-agent.kext
 
-  frida-barebone-agent-blob:
+  meshlink-barebone-agent-blob:
     needs: frida-gum-none
     strategy:
       matrix:
@@ -2220,14 +2220,14 @@ jobs:
       - name: Upload agent
         uses: actions/upload-artifact@v7
         with:
-          name: frida-barebone-agent-${{ matrix.flavor }}-${{ matrix.arch }}
-          path: subprojects/frida-core/src/barebone/agent/target-${{ matrix.flavor }}/${{ matrix.rust_target }}/release/frida-barebone-agent
+          name: meshlink-barebone-agent-${{ matrix.flavor }}-${{ matrix.arch }}
+          path: subprojects/frida-core/src/barebone/agent/target-${{ matrix.flavor }}/${{ matrix.rust_target }}/release/meshlink-barebone-agent
 
   # The Makefile drives Cargo and the prelink itself, so the flags the agent needs live
   # there rather than here. It stops at the prelinked object: a .ko is only loadable on
   # the exact GKI build it was made for, since vermagic names it verbatim, so the
   # kernel half is left to whoever has that kernel.
-  frida-barebone-agent-linux:
+  meshlink-barebone-agent-linux:
     needs: frida-gum-none
     strategy:
       matrix:

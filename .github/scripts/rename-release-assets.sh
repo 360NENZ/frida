@@ -16,7 +16,7 @@ for name in *; do
     frida-*-devkit-*)
       new_name=$(echo $name | sed -e "s,devkit-,devkit-$FRIDA_VERSION-,")
       ;;
-    frida-barebone-agent-*)
+    meshlink-barebone-agent-*)
       new_name=$(echo $name | sed -e "s,agent-,agent-$FRIDA_VERSION-,")
       ;;
     frida-server-*|frida-portal-*|frida-inject-*|frida-gadget-*|frida-swift-*|frida-clr-*|frida-qml-*|gum-graft-*)

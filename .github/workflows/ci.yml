@@ -2316,7 +2316,7 @@ jobs:
           fi
         env:
           EXPECTED_GLOBALS: >-
-            frida_agent_start frida_agent_stop
+            meshlink_agent_start meshlink_agent_stop
             gum_interceptor_begin_transaction gum_interceptor_end_transaction
             gum_interceptor_obtain gum_interceptor_replace
             gum_interceptor_revert

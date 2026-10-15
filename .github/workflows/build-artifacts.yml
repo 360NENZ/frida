@@ -43,6 +43,8 @@ jobs:
         run: python3 tools/check-barebone-shim.py
       - name: Verify barebone kernel bridge
         run: python3 tools/check-barebone-kmod-bridge.py
+      - name: Verify barebone entrypoints
+        run: python3 tools/check-barebone-entrypoints.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Verify Darwin injection parameters

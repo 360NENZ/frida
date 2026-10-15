@@ -7,6 +7,7 @@ LEGACY_MARKERS = (
     b"agent-worker",
     b"io-worker",
     b"js-event-loop",
+    b"main-worker",
     b"io.meshlink.service",
     b"rpc-worker",
     b"rpc-listener-",

@@ -13,8 +13,8 @@ sources = {
         "CONTROL_TOKEN",
     ),
     "subprojects/frida-core/src/barebone/agent/linux/meshlink-kmod.c": (
-        "FRIDA_CONTROL_MAGIC",
-        "FRIDA_CONTROL_TOKEN",
+        "MESHLINK_CONTROL_MAGIC",
+        "MESHLINK_CONTROL_TOKEN",
     ),
 }
 

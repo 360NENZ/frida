@@ -7,10 +7,15 @@ linux = (root / "linux/meshlink-kmod.c").read_text(encoding="utf-8")
 macos = (root / "macos/frida-kext.c").read_text(encoding="utf-8")
 kmod = (root / "src/linux/kmod.rs").read_text(encoding="utf-8")
 hostlink = (root / "src/hostlink_chardev.rs").read_text(encoding="utf-8")
+makefile = (root / "linux/Makefile").read_text(encoding="utf-8")
 
 for source in (linux, macos, kmod, hostlink):
     assert "frida_kmod_" not in source
 assert not re.search(r"\bfrida_[A-Za-z_0-9]+\b", linux)
+assert not re.search(r"\b(?:FRIDA_[A-Za-z_0-9]+|Frida[A-Za-z_0-9]+)\b", linux)
+for feature in ("TASK_THREAD_GROUP", "FS_STRUCT_LOCK"):
+    assert f"-DMESHLINK_HAVE_{feature}" in makefile
+    assert f"#ifdef MESHLINK_HAVE_{feature}" in linux
 
 
 def definitions(source):

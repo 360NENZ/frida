@@ -41,6 +41,7 @@ assert '"Frida"' not in (PAYLOAD_GLUE / "unwind-sitter-glue.c").read_text(encodi
 
 fruity_injector = (ROOT / "subprojects/frida-core/src/fruity/injector.vala").read_text(encoding="utf-8")
 gadget = (ROOT / "subprojects/frida-core/lib/gadget/gadget.vala").read_text(encoding="utf-8")
+gadget_glue = (ROOT / "subprojects/frida-core/lib/gadget/gadget-glue.c").read_text(encoding="utf-8")
 assert ".add_int_value (Random.int_range (49152, 65536))" in fruity_injector
 assert ".add_string_value (\"pick-next\")" in fruity_injector
 assert "27043" not in fruity_injector
@@ -48,3 +49,5 @@ assert 'Environment.set_thread_name ("net-io-%u".printf (listen_port))' in gadge
 assert 'Environment.set_thread_name ("net-io-unix")' in gadget
 assert r'/^net-io-(\d+)$/.match (name, 0, out info)' in fruity_injector
 assert "rpc-listener-" not in gadget and "rpc-listener-" not in fruity_injector
+assert 'g_thread_new ("io-worker", run_worker_loop, NULL)' in gadget_glue
+assert '"rpc-worker"' not in gadget_glue

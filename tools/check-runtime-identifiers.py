@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 LEGACY_MARKERS = (
+    b"rpc-worker",
+    b"rpc-listener-",
     b"frida-json-root",
     b"/_frida.js",
     b"frida-console-",

@@ -2303,7 +2303,7 @@ jobs:
         working-directory: subprojects/frida-core/src/barebone/agent/linux
         run: |
           undefined=$(${{ matrix.toolprefix }}nm --undefined-only frida-agent-prelinked.o.bin \
-            | awk '{ print $2 }' | grep -v '^frida_kmod_' || true)
+            | awk '{ print $2 }' | grep -v '^meshlink_kmod_' || true)
           if [ -n "$undefined" ]; then
             echo "Undefined beyond the kmod glue:" $undefined
             exit 1

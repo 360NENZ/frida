@@ -8,6 +8,10 @@ linux = (root / "linux/meshlink-kmod.c").read_text(encoding="utf-8")
 macos = (root / "macos/frida-kext.c").read_text(encoding="utf-8")
 rust = (root / "src/lib.rs").read_text(encoding="utf-8")
 xnu = (root / "src/xnu.rs").read_text(encoding="utf-8")
+winnt = (root / "src/winnt.rs").read_text(encoding="utf-8")
+host_session = (
+    workspace / "subprojects/frida-core/src/barebone/barebone-host-session.vala"
+).read_text(encoding="utf-8")
 makefile = (root / "linux/Makefile").read_text(encoding="utf-8")
 workflow = (workspace / ".github/workflows/ci.yml").read_text(encoding="utf-8")
 
@@ -40,5 +44,11 @@ macos_symbols = set(re.findall(
 ))
 rust_symbols = set(re.findall(r"\bstatic (meshlink_agent_[A-Za-z_0-9]+):", rust + xnu))
 assert rust_symbols and rust_symbols <= macos_symbols, sorted(rust_symbols - macos_symbols)
+
+winnt_tag = re.search(r"const POOL_TAG: u32 = (0x[0-9a-f_]+);", winnt)
+host_tag = re.search(r"private const uint64 POOL_TAG = (0x[0-9a-f]+);", host_session)
+assert winnt_tag is not None and host_tag is not None
+assert int(winnt_tag.group(1), 16) == int(host_tag.group(1), 16)
+assert int(winnt_tag.group(1), 16) != 0x64697246
 
 print(f"Barebone entrypoints: Linux range arguments and {len(rust_symbols)} XNU constants match")

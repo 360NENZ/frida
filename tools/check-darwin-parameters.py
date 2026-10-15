@@ -38,3 +38,8 @@ for name, legacy, current in (
     assert current in source, f"{name}: missing payload entrypoint"
 
 assert '"Frida"' not in (PAYLOAD_GLUE / "unwind-sitter-glue.c").read_text(encoding="utf-8")
+
+fruity_injector = (ROOT / "subprojects/frida-core/src/fruity/injector.vala").read_text(encoding="utf-8")
+assert ".add_int_value (Random.int_range (49152, 65536))" in fruity_injector
+assert ".add_string_value (\"pick-next\")" in fruity_injector
+assert "27043" not in fruity_injector

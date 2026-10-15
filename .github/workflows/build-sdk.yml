@@ -1,0 +1,96 @@
+name: Build SDK archives
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-x86_64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      FRIDA_BUILD_JOBS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch dependency recipes
+        run: |
+          git submodule update --init --depth 1 releng
+          git -C releng submodule update --init --depth 1
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gperf
+      - name: Build SDK
+        run: python3 releng/deps.py build --host linux-x86_64
+        env:
+          FRIDA_DEPS: ${{ runner.temp }}/deps
+      - name: Upload SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshlink-sdk-linux-x86_64
+          path: ${{ runner.temp }}/deps/sdk-linux-x86_64.tar.xz
+          if-no-files-found: error
+
+  android-arm64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      FRIDA_BUILD_JOBS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch dependency recipes
+        run: |
+          git submodule update --init --depth 1 releng
+          git -C releng submodule update --init --depth 1
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gperf
+      - name: Set up NDK
+        id: ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r29
+          add-to-path: false
+      - name: Build SDK
+        run: python3 releng/deps.py build --host android-arm64 --build linux-x86_64
+        env:
+          ANDROID_NDK_ROOT: ${{ steps.ndk.outputs.ndk-path }}
+          FRIDA_DEPS: ${{ runner.temp }}/deps
+      - name: Upload SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshlink-sdk-android-arm64
+          path: ${{ runner.temp }}/deps/sdk-android-arm64.tar.xz
+          if-no-files-found: error
+
+  windows-x86_64:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    env:
+      FRIDA_BUILD_JOBS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: x64
+      - name: Fetch dependency recipes
+        shell: pwsh
+        run: |
+          git submodule update --init --depth 1 releng
+          git -C releng submodule update --init --depth 1
+          python -m pip install setuptools
+      - name: Build SDK
+        shell: pwsh
+        run: python releng/deps.py build --host windows-x86_64-md
+        env:
+          FRIDA_DEPS: ${{ runner.temp }}\deps
+      - name: Upload SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshlink-sdk-windows-x86_64-md
+          path: ${{ runner.temp }}\deps\sdk-windows-x86_64-md.tar.xz
+          if-no-files-found: error

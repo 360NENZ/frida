@@ -68,6 +68,8 @@ jobs:
         run: python3 tools/check-droidy-injection-paths.py
       - name: Verify compiler runtime identity
         run: python3 tools/check-compiler-identity.py
+      - name: Verify server temporary directory
+        run: python3 tools/check-server-tempdir.py
       - name: Install Python development headers
         run: |
           sudo apt-get update
@@ -189,6 +191,8 @@ jobs:
         run: python -m unittest releng.tests.test_neutral_valac
       - name: Verify Windows helper service identity
         run: python tools/check-windows-service-identity.py
+      - name: Verify server temporary directory
+        run: python tools/check-server-tempdir.py
       - name: Configure
         run: >-
           .\configure
@@ -296,6 +300,8 @@ jobs:
         run: python3 tools/check-darwin-parameters.py
       - name: Verify compiler runtime identity
         run: python3 tools/check-compiler-identity.py
+      - name: Verify server temporary directory
+        run: python3 tools/check-server-tempdir.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Set up NDK

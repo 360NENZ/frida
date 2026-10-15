@@ -4,6 +4,7 @@ from pathlib import Path
 
 
 LEGACY_MARKERS = (
+    b"io.meshlink.service",
     b"rpc-worker",
     b"rpc-listener-",
     b"frida-json-root",

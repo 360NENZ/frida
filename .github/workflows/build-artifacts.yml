@@ -80,7 +80,9 @@ jobs:
           cp build/subprojects/frida-core/lib/gadget/meshlink-gadget.so dist/libmeshlink.so
           dist/meshlinkd --version
       - name: Verify runtime identifiers
-        run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
+        run: |
+          python3 -m unittest tools.test_runtime_identifiers
+          python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Locate generated identity literals
         if: failure()
         run: grep -R -n -F --include='*.c' '"Frida"' build/subprojects/frida-core | head -80 || true
@@ -294,7 +296,9 @@ jobs:
           cp "${{ runner.temp }}/frida-android/bin/frida-server" dist/meshlinkd
           cp "${{ runner.temp }}/frida-android/lib/frida-1.0/64/meshlink-gadget.so" dist/libmeshlink.so
       - name: Verify runtime identifiers
-        run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
+        run: |
+          python3 -m unittest tools.test_runtime_identifiers
+          python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.so
       - name: Locate generated identity literals
         if: failure()
         run: grep -R -n -F --include='*.c' '"Frida"' build/subprojects/frida-core | head -80 || true

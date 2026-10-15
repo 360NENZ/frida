@@ -83,20 +83,28 @@ LEGACY_MARKERS = (
 )
 
 
-if len(sys.argv) < 2:
-    raise SystemExit("usage: check-runtime-identifiers.py BINARY [BINARY ...]")
+def remaining_identifiers(contents: bytes) -> list[str]:
+    remaining = {marker.decode("ascii").rstrip("\0") for marker in LEGACY_MARKERS if marker in contents}
+    for match in re.finditer(rb"[\x20-\x7e]{5,}", contents):
+        text = match.group()
+        if b"frida" in text.lower() and text.lower() != b"friday":
+            remaining.add(text[:160].decode("ascii") + ("..." if len(text) > 160 else ""))
+    return sorted(remaining)
 
-for filename in sys.argv[1:]:
-    path = Path(filename)
-    contents = path.read_bytes()
-    remaining = [marker.decode("ascii").rstrip("\0") for marker in LEGACY_MARKERS if marker in contents]
-    remaining += sorted(
-        match.decode("ascii").rstrip("\0") for match in set(
-            re.findall(rb"(?<![A-Za-z0-9_])(?:Frida[A-Z][A-Za-z0-9_]*|FRIDA_[A-Z0-9_]+)\x00", contents)
-            + re.findall(rb"(?<![A-Za-z0-9_])frida(?:-[a-z0-9]+)*-error-quark\x00", contents)
-        )
-    )
-    if remaining:
-        raise SystemExit(f"{path}: legacy runtime identifiers remain: {', '.join(remaining)}")
 
-print("No legacy runtime identifiers from the audited set remain")
+def main() -> None:
+    if len(sys.argv) < 2:
+        raise SystemExit("usage: check-runtime-identifiers.py BINARY [BINARY ...]")
+
+    for filename in sys.argv[1:]:
+        path = Path(filename)
+        remaining = remaining_identifiers(path.read_bytes())
+        if remaining:
+            examples = ", ".join(remaining[:12])
+            raise SystemExit(f"{path}: {len(remaining)} legacy runtime identifiers remain: {examples}")
+
+    print("No legacy runtime identifiers from the audited set remain")
+
+
+if __name__ == "__main__":
+    main()

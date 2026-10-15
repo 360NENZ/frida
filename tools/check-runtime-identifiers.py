@@ -75,6 +75,8 @@ LEGACY_MARKERS = (
     b"FridaPortalMembershipId",
     b"FridaServiceSessionId",
     b"Frida.",
+    b"-isystem /frida",
+    b"FRIDA_V8_EXTRA_FLAGS",
 )
 
 

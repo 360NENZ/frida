@@ -46,6 +46,8 @@ jobs:
           build/subprojects/frida-core/tests/frida-tests -m slow -p /HostSession/Connectivity/Peer/flawless
           build/subprojects/frida-gum/tests/gum-tests -m slow \
             -p '/GumJS/Script/CModule/cmodule_can_be_defined_with_toolchain#QJS'
+          build/subprojects/frida-gum/tests/gum-tests -m slow \
+            -p '/GumJS/Script/CModule/cmodule_can_be_defined_with_toolchain#V8'
       - name: Install
         run: make install
       - name: Collect binaries

@@ -55,3 +55,7 @@ assert '"rpc-worker"' not in gadget_glue
 code_segment = (ROOT / "subprojects/frida-gum/gum/backend-darwin/gumcodesegment-darwin.c").read_text(encoding="utf-8")
 assert 'gum_file_open_tmp ("io-XXXXXX.dylib", &dylib_path)' in code_segment
 assert '"frida-XXXXXX.dylib"' not in code_segment
+
+device_monitor = (ROOT / "subprojects/frida-core/src/fruity/device-monitor-macos.vala").read_text(encoding="utf-8")
+assert 'new Darwin.GCD.DispatchQueue ("net.pairing.worker", Darwin.GCD.DispatchQueueAttr.SERIAL)' in device_monitor
+assert "re.frida.fruity.remotepairing" not in device_monitor

@@ -10,6 +10,7 @@ hostlink = (root / "src/hostlink_chardev.rs").read_text(encoding="utf-8")
 
 for source in (linux, macos, kmod, hostlink):
     assert "frida_kmod_" not in source
+assert not re.search(r"\bfrida_[A-Za-z_0-9]+\b", linux)
 
 
 def definitions(source):

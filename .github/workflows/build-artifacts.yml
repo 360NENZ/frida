@@ -39,6 +39,8 @@ jobs:
         run: python3 tools/ensure-submodules.py frida-gum frida-core frida-python frida-tools
       - name: Verify kernel control contract
         run: python3 tools/check-kernel-control.py
+      - name: Verify barebone x86 shim ABI
+        run: python3 tools/check-barebone-shim.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Verify Darwin injection parameters

@@ -68,6 +68,12 @@ LEGACY_MARKERS = (
     b"FridaFuture",
     b"FridaPromise",
     b"org.tools.bridge.Gadget",
+    b"FridaAgentScriptId",
+    b"FridaAgentSessionId",
+    b"FridaChannelId",
+    b"FridaInjectorPayloadId",
+    b"FridaPortalMembershipId",
+    b"FridaServiceSessionId",
 )
 
 

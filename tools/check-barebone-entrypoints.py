@@ -106,4 +106,43 @@ assert "extern \"C\" fn meshlink_winnt_on_fault(" in winnt
 assert "bl meshlink_winnt_on_fault" in winnt
 assert not re.search(r"\bfrida_winnt_[a-z_]+\b", winnt)
 
+win9x_asm_symbols = {
+    "meshlink_win9x_event_thunk",
+    "meshlink_win9x_wake_event_thunk",
+    "meshlink_win9x_thread_start_thunk",
+    "meshlink_win9x_control_thunk",
+    "meshlink_win9x_time_out_thunk",
+    "meshlink_win9x_thread_thunk",
+    "meshlink_win9x_hw_int_thunk",
+}
+assert set(re.findall(r"(?m)^\.global (meshlink_win9x_[a-z_]+)$", win9x)) == win9x_asm_symbols
+assert win9x_asm_symbols <= set(re.findall(r"(?m)^(meshlink_win9x_[a-z_]+):$", win9x))
+assert all(f"fn {name}();" in win9x for name in win9x_asm_symbols - {
+    "meshlink_win9x_time_out_thunk",
+})
+fault_thunks = {
+    "meshlink_win9x_fault_thunk_ud": 6,
+    "meshlink_win9x_fault_thunk_gp": 13,
+    "meshlink_win9x_fault_thunk_pf": 14,
+}
+for name, number in fault_thunks.items():
+    assert f"FAULT_THUNK {name}, {number}" in win9x
+    assert f"fn {name}();" in win9x
+callbacks = set(re.findall(
+    r"(?m)^\s+call (meshlink_win9x_(?:on_[a-z_]+|thread_start))$", win9x
+))
+assert callbacks == {
+    "meshlink_win9x_on_event",
+    "meshlink_win9x_on_wake_event",
+    "meshlink_win9x_on_thread_start",
+    "meshlink_win9x_on_control",
+    "meshlink_win9x_on_fault",
+    "meshlink_win9x_thread_start",
+    "meshlink_win9x_on_hw_int",
+}
+assert all(f'extern "C" fn {name}(' in win9x for name in callbacks)
+assert "static mut meshlink_win9x_resume:" in win9x
+assert "meshlink_win9x_resume@GOTOFF" in win9x
+assert not re.search(r"\bfrida_win9x_[a-z_]+\b", win9x)
+
 print(f"Barebone entrypoints: Linux range arguments and {len(rust_symbols)} XNU constants match")

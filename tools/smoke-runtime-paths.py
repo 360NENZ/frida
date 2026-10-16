@@ -23,7 +23,9 @@ try:
             script.load()
             assert len(messages) == 1, (runtime, messages)
             assert messages[0]["type"] == "error", (runtime, messages)
-            assert "/meshlink/runtime/hexdump.js:" in messages[0]["stack"], (runtime, messages)
+            assert re.search(r"/[0-9a-f]{24}/hexdump\.js:", messages[0]["stack"]), (
+                runtime, messages
+            )
             script.unload()
 
             messages.clear()

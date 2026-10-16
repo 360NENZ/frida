@@ -197,6 +197,12 @@ jobs:
           name: frida-client-linux-x86_64
           path: dist/frida-client-linux-x86_64.tar.gz
           if-no-files-found: error
+      - name: Upload Core API header
+        uses: actions/upload-artifact@v4
+        with:
+          name: frida-core-api-linux-x86_64
+          path: ${{ runner.temp }}/frida/include/frida-1.0/frida-core.h
+          if-no-files-found: error
       - name: Test Go client binding
         run: |
           git submodule update --init --depth 1 subprojects/frida-go
@@ -206,6 +212,22 @@ jobs:
           export CGO_LDFLAGS="$(pkg-config --static --define-variable=frida_sdk_prefix="$sdk" --libs frida-core-1.0)"
           cd subprojects/frida-go
           go test ./frida -run TestGetRPCResponse -count=1
+      - name: Type-check Node client binding
+        if: success() || failure()
+        run: |
+          git submodule update --init --depth 1 subprojects/frida-node
+          cd subprojects/frida-node
+          git submodule update --init --depth 1 frida-bindgen
+          npm ci --ignore-scripts --no-audit --no-fund
+          PYTHONPATH=src:frida-bindgen python3 -m frida_bindgen \
+            --frida-gir="${{ runner.temp }}/frida/share/gir-1.0/Frida-1.0.gir" \
+            --glib-gir="$GITHUB_WORKSPACE/subprojects/frida-core/src/api/GLib-2.0.gir" \
+            --gobject-gir="$GITHUB_WORKSPACE/subprojects/frida-core/src/api/GObject-2.0.gir" \
+            --gio-gir="$GITHUB_WORKSPACE/subprojects/frida-core/src/api/Gio-2.0.gir" \
+            --output-ts=src/frida.ts \
+            --output-dts=src/frida_binding.d.ts \
+            --output-c="${{ runner.temp }}/frida-node-binding.c"
+          npx tsc --noEmit -p tsconfig.json
 
   windows-x86_64:
     if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}

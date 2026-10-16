@@ -47,4 +47,35 @@ assert "worker_name[15] = '\\0';" in gum_linux
 assert "g_thread_new (worker_name, gum_linux_handle_modify_thread_comms," in gum_linux
 assert '"gum-modify-thread-worker"' not in gum_linux
 
+for path, legacy, replacement in (
+    (
+        "lib/base/p2p.vala",
+        "cert-worker",
+        "new Thread<bool> (Uuid.string_random ().substring (0, 15), () =>",
+    ),
+    (
+        "src/windows/frida-helper-process.vala",
+        "helper-factory",
+        "new Thread<bool> (Uuid.string_random ().substring (0, 15), obtain_worker)",
+    ),
+    (
+        "src/fruity/device-monitor-portable.vala",
+        "usb-worker",
+        "new Thread<void> (Uuid.string_random ().substring (0, 15), perform_usb_work)",
+    ),
+    (
+        "src/qnx/qinjector.vala",
+        "pulse-reader",
+        "new Thread<void> (Uuid.string_random ().substring (0, 15), process_io)",
+    ),
+    (
+        "src/prospero/binjector.vala",
+        "app-launch",
+        "new Thread<void> (Uuid.string_random ().substring (0, 15), request.run)",
+    ),
+):
+    source = (root / path).read_text(encoding="utf-8")
+    assert f'"{legacy}"' not in source, path
+    assert replacement in source, path
+
 print("Prospero, kernel, and core worker names are per-instance")

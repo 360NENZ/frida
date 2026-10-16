@@ -89,6 +89,11 @@ LEGACY_MARKERS = (
     b"../subprojects/frida-core/",
     b"../subprojects/frida-gum/",
     b"runtime-compiler.so",
+    b"cert-worker",
+    b"helper-factory",
+    b"usb-worker",
+    b"pulse-reader",
+    b"app-launch",
 )
 
 

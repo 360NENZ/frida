@@ -33,6 +33,25 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
             [],
         )
 
+    def test_detects_wide_runtime_strings(self):
+        for encoding in ("utf-16-le", "utf-16-be"):
+            with self.subTest(encoding=encoding):
+                contents = (
+                    "FridaHostSession\x00".encode(encoding)
+                    + "custom FrIdA plugin\x00".encode(encoding)
+                )
+                remaining = checker.remaining_identifiers(contents)
+                self.assertIn("FridaHostSession", remaining)
+                self.assertIn("custom FrIdA plugin", remaining)
+
+    def test_allows_neutral_wide_strings(self):
+        for encoding in ("utf-16-le", "utf-16-be"):
+            with self.subTest(encoding=encoding):
+                self.assertEqual(
+                    checker.remaining_identifiers("meshlink_agent\x00Friday\x00".encode(encoding)),
+                    [],
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

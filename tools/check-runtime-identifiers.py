@@ -92,11 +92,27 @@ LEGACY_MARKERS = (
 
 
 def remaining_identifiers(contents: bytes) -> list[str]:
-    remaining = {marker.decode("ascii").rstrip("\0") for marker in LEGACY_MARKERS if marker in contents}
+    remaining = {
+        marker.decode("ascii").rstrip("\0")
+        for marker in LEGACY_MARKERS
+        if marker in contents
+        or any(
+            marker.decode("ascii").encode(encoding) in contents
+            for encoding in ("utf-16-le", "utf-16-be")
+        )
+    }
     for match in re.finditer(rb"[\x20-\x7e]{5,}", contents):
         text = match.group()
         if b"frida" in text.lower() and text.lower() != b"friday":
             remaining.add(text[:160].decode("ascii") + ("..." if len(text) > 160 else ""))
+    for encoding, pattern in (
+        ("utf-16-le", rb"(?:[\x20-\x7e]\x00){5,}"),
+        ("utf-16-be", rb"(?:\x00[\x20-\x7e]){5,}"),
+    ):
+        for match in re.finditer(pattern, contents):
+            text = match.group().decode(encoding)
+            if "frida" in text.lower() and text.lower() != "friday":
+                remaining.add(text[:160] + ("..." if len(text) > 160 else ""))
     return sorted(remaining)
 
 

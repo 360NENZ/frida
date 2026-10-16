@@ -94,6 +94,7 @@ LEGACY_MARKERS = (
     b"usb-worker",
     b"pulse-reader",
     b"app-launch",
+    b"/_meshlink_worker_runtime.js",
 )
 
 

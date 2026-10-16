@@ -66,3 +66,10 @@ assert "re.frida.fruity.remotepairing" not in device_monitor
 simmy = (ROOT / "subprojects/frida-core/src/simmy/simmy-host-session-glue.m").read_text(encoding="utf-8")
 assert 'dispatch_queue_create ("io.meshlink.simmy.queue", DISPATCH_QUEUE_SERIAL)' in simmy
 assert "re.frida.simmy.queue" not in simmy
+
+policyd = (ROOT / "subprojects/frida-core/src/darwin/policyd.h").read_text(encoding="utf-8")
+server = (ROOT / "subprojects/frida-core/server/server.vala").read_text(encoding="utf-8")
+assert '#define FRIDA_POLICYD_SERVICE_NAME "io.meshlink.policyd"' in policyd
+assert "re.frida.policyd" not in policyd
+assert 'Path.get_basename (args[0]) == "meshlink-policyd"' in server
+assert '"frida-policyd"' not in server

@@ -227,7 +227,8 @@ jobs:
             --output-ts=src/frida.ts \
             --output-dts=src/frida_binding.d.ts \
             --output-c="${{ runner.temp }}/frida-node-binding.c"
-          npx tsc --noEmit -p tsconfig.json
+          npx tsc --noEmit --strict --target ES2022 --module Node16 \
+            --moduleResolution Node16 src/frida.ts
 
   windows-x86_64:
     if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}

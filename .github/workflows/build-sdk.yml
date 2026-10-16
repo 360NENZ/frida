@@ -124,6 +124,11 @@ jobs:
       FRIDA_BUILD_JOBS: "2"
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify GLib codegen Python
+        run: python3 -c 'import distutils.version'
       - name: Fetch dependency recipes
         run: |
           git submodule update --init --depth 1 releng

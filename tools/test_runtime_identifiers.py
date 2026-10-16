@@ -57,6 +57,16 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
         self.assertIn("MeshlinkWebConnection", remaining)
         self.assertNotIn("R12ABAgentSession", remaining)
 
+    def test_original_only_skips_rebranded_types_but_detects_original_markers(self):
+        remaining = checker.remaining_identifiers(
+            b"MeshlinkAgentSession\x00meshlink:rpc\x00FridaAgentSession\x00js-event-loop\x00",
+            original_only=True,
+        )
+        self.assertIn("FridaAgentSession", remaining)
+        self.assertIn("js-event-loop", remaining)
+        self.assertNotIn("MeshlinkAgentSession", remaining)
+        self.assertNotIn("meshlink:rpc", remaining)
+
     def test_detects_wide_runtime_strings(self):
         for encoding in ("utf-16-le", "utf-16-be"):
             with self.subTest(encoding=encoding):

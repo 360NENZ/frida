@@ -1,5 +1,5 @@
+import argparse
 import re
-import sys
 from pathlib import Path
 
 
@@ -101,11 +101,22 @@ LEGACY_MARKERS = (
     b"Meshlink/v",
 )
 
+ORIGINAL_MARKERS = tuple(marker for marker in LEGACY_MARKERS if b"frida" in marker.lower()) + (
+    b"agent-worker",
+    b"io-worker",
+    b"js-event-loop",
+    b"main-worker",
+    b"rpc-worker",
+    b"rpc-listener-",
+    b"lolcathost",
+)
 
-def remaining_identifiers(contents: bytes) -> list[str]:
+
+def remaining_identifiers(contents: bytes, original_only: bool = False) -> list[str]:
+    markers = ORIGINAL_MARKERS if original_only else LEGACY_MARKERS
     remaining = {
         marker.decode("ascii").rstrip("\0")
-        for marker in LEGACY_MARKERS
+        for marker in markers
         if marker in contents
         or any(
             marker.decode("ascii").encode(encoding) in contents
@@ -116,8 +127,9 @@ def remaining_identifiers(contents: bytes) -> list[str]:
         text = match.group()
         if b"frida" in text.lower() and text.lower() != b"friday":
             remaining.add(text[:160].decode("ascii") + ("..." if len(text) > 160 else ""))
-        for type_name in re.finditer(rb"Meshlink[A-Z][A-Za-z0-9_]*", text):
-            remaining.add(type_name.group().decode("ascii"))
+        if not original_only:
+            for type_name in re.finditer(rb"Meshlink[A-Z][A-Za-z0-9_]*", text):
+                remaining.add(type_name.group().decode("ascii"))
     for encoding, pattern in (
         ("utf-16-le", rb"(?:[\x20-\x7e]\x00){5,}"),
         ("utf-16-be", rb"(?:\x00[\x20-\x7e]){5,}"),
@@ -126,22 +138,25 @@ def remaining_identifiers(contents: bytes) -> list[str]:
             text = match.group().decode(encoding)
             if "frida" in text.lower() and text.lower() != "friday":
                 remaining.add(text[:160] + ("..." if len(text) > 160 else ""))
-            remaining.update(re.findall(r"Meshlink[A-Z][A-Za-z0-9_]*", text))
+            if not original_only:
+                remaining.update(re.findall(r"Meshlink[A-Z][A-Za-z0-9_]*", text))
     return sorted(remaining)
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        raise SystemExit("usage: check-runtime-identifiers.py BINARY [BINARY ...]")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--original-only", action="store_true")
+    parser.add_argument("binaries", nargs="+", type=Path)
+    args = parser.parse_args()
 
-    for filename in sys.argv[1:]:
-        path = Path(filename)
-        remaining = remaining_identifiers(path.read_bytes())
+    for path in args.binaries:
+        remaining = remaining_identifiers(path.read_bytes(), original_only=args.original_only)
         if remaining:
             examples = ", ".join(remaining[:12])
             raise SystemExit(f"{path}: {len(remaining)} legacy runtime identifiers remain: {examples}")
 
-    print("No legacy runtime identifiers from the audited set remain")
+    scope = "original Frida" if args.original_only else "legacy runtime"
+    print(f"No {scope} identifiers from the audited set remain")
 
 
 if __name__ == "__main__":

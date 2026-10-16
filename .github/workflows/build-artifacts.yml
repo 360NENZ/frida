@@ -115,6 +115,8 @@ jobs:
           -Dfrida-gum:tests=enabled
       - name: Compile
         run: make -j"$(nproc)"
+      - name: Verify original identifiers in agent
+        run: python3 tools/check-runtime-identifiers.py --original-only build/subprojects/frida-core/lib/agent/meshlink-agent.so
       - name: Test local agent and host session
         run: |
           build/subprojects/frida-core/tests/frida-tests -p /Agent/Script/load-and-receive-messages
@@ -318,6 +320,8 @@ jobs:
           }
       - name: Compile
         run: .\make
+      - name: Verify original identifiers in agent
+        run: python tools/check-runtime-identifiers.py --original-only build\subprojects\frida-core\lib\agent\meshlink-agent.dll
       - name: Install
         run: .\make install
       - name: Verify installed Windows helper identity
@@ -458,6 +462,8 @@ jobs:
           -Dfrida-core:compat=disabled
       - name: Compile
         run: make -j2
+      - name: Verify original identifiers in agent
+        run: python3 tools/check-runtime-identifiers.py --original-only build/subprojects/frida-core/lib/agent/meshlink-agent.so
       - name: Install
         run: make install
       - name: Collect binaries
@@ -535,6 +541,8 @@ jobs:
           -Dfrida-core:compat=disabled
       - name: Compile
         run: make -j2
+      - name: Verify original identifiers in agent
+        run: python3 tools/check-runtime-identifiers.py --original-only build/subprojects/frida-core/lib/agent/meshlink-agent.dylib
       - name: Diagnose Gadget coroutine linkage
         if: failure()
         run: |

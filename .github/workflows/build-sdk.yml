@@ -30,6 +30,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 releng
           git -C releng submodule update --init --depth 1
+      - name: Verify SDK bundle URLs
+        run: python3 -m unittest releng.tests.test_sdk_bundle_urls
       - name: Install build tools
         run: |
           sudo apt-get update
@@ -57,6 +59,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 releng
           git -C releng submodule update --init --depth 1
+      - name: Verify SDK bundle URLs
+        run: python3 -m unittest releng.tests.test_sdk_bundle_urls
       - name: Install build tools
         run: |
           sudo apt-get update
@@ -97,6 +101,9 @@ jobs:
           git submodule update --init --depth 1 releng
           git -C releng submodule update --init --depth 1
           python -m pip install setuptools
+      - name: Verify SDK bundle URLs
+        shell: pwsh
+        run: python -m unittest releng.tests.test_sdk_bundle_urls
       - name: Build SDK
         shell: pwsh
         run: python releng/deps.py build --host windows-x86_64-mt
@@ -121,6 +128,8 @@ jobs:
         run: |
           git submodule update --init --depth 1 releng
           git -C releng submodule update --init --depth 1
+      - name: Verify SDK bundle URLs
+        run: python3 -m unittest releng.tests.test_sdk_bundle_urls
       - name: Install build tools
         run: command -v gperf || brew install gperf
       - name: Build SDK
@@ -152,6 +161,9 @@ jobs:
           git submodule update --init --depth 1 releng
           git -C releng submodule update --init --depth 1
           python -m pip install setuptools
+      - name: Verify SDK bundle URLs
+        shell: pwsh
+        run: python -m unittest releng.tests.test_sdk_bundle_urls
       - name: Build SDK
         shell: pwsh
         run: python releng/deps.py build --host windows-x86_64-md

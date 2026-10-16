@@ -16,6 +16,9 @@ injector = (root / "subprojects/frida-core/src/windows/winjector.vala").read_tex
 assert 'Uuid.string_random () + ".dll"' in injector
 assert "blob%u.dll" not in injector
 
+build = (root / "subprojects/frida-core/meson.build").read_text(encoding="utf-8")
+assert "if host_os_family == 'windows' and not is_shared\n  add_project_arguments('-DVALA_EXTERN=extern', language: 'c')" in build
+
 for relative_path, names in (
     ("lib/base/windows-glue.c", ("HandleStream", "HandleInputStream", "HandleOutputStream")),
     ("lib/pipe/pipe-windows.c", ("PipeInputStream", "PipeOutputStream")),
@@ -33,5 +36,6 @@ for filename in sys.argv[1:]:
         marker = f"FridaWindows{name}".encode("ascii")
         assert marker not in contents, (filename, marker)
         assert marker.decode("ascii").encode("utf-16le") not in contents, (filename, marker)
+    assert b"frida_adb_client_close\0" not in contents, filename
 
 print("Windows helper service and injected blob names are neutral")

@@ -97,6 +97,8 @@ LEGACY_MARKERS = (
     b"/_meshlink_worker_runtime.js",
     b"/meshlink/bootstrap.js",
     b"meshlink:rpc",
+    b"Meshlink Agent",
+    b"Meshlink/v",
 )
 
 

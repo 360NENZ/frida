@@ -22,6 +22,8 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
             b"/_meshlink_worker_runtime.js\x00"
             b"/meshlink/bootstrap.js\x00"
             b"meshlink:rpc\x00"
+            b"Meshlink Agent\x00"
+            b"Meshlink/v17\x00"
         )
         self.assertIn("meshlink-worker", remaining)
         self.assertIn("main-worker", remaining)
@@ -34,6 +36,8 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
         self.assertIn("/_meshlink_worker_runtime.js", remaining)
         self.assertIn("/meshlink/bootstrap.js", remaining)
         self.assertIn("meshlink:rpc", remaining)
+        self.assertIn("Meshlink Agent", remaining)
+        self.assertIn("Meshlink/v", remaining)
         self.assertIn("frida", remaining)
         self.assertIn("FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa", remaining)
         self.assertIn("FRIDA_1.0", remaining)

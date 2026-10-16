@@ -64,6 +64,8 @@ jobs:
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Verify Darwin injection parameters
         run: python3 tools/check-darwin-parameters.py
+      - name: Verify Darwin graft segment names
+        run: python3 tools/check-darwin-grafted-segments.py
       - name: Verify Droidy injection paths
         run: python3 tools/check-droidy-injection-paths.py
       - name: Verify compiler runtime identity

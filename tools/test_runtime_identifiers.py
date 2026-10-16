@@ -45,6 +45,14 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
             [],
         )
 
+    def test_detects_fixed_runtime_type_names(self):
+        remaining = checker.remaining_identifiers(
+            b"MeshlinkAgentSession\x00MeshlinkWebConnection\x00R12ABAgentSession\x00"
+        )
+        self.assertIn("MeshlinkAgentSession", remaining)
+        self.assertIn("MeshlinkWebConnection", remaining)
+        self.assertNotIn("R12ABAgentSession", remaining)
+
     def test_detects_wide_runtime_strings(self):
         for encoding in ("utf-16-le", "utf-16-be"):
             with self.subTest(encoding=encoding):
@@ -62,6 +70,14 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
                 self.assertEqual(
                     checker.remaining_identifiers("meshlink_agent\x00Friday\x00".encode(encoding)),
                     [],
+                )
+
+    def test_detects_wide_fixed_type_names(self):
+        for encoding in ("utf-16-le", "utf-16-be"):
+            with self.subTest(encoding=encoding):
+                self.assertIn(
+                    "MeshlinkAgentSession",
+                    checker.remaining_identifiers("MeshlinkAgentSession\x00".encode(encoding)),
                 )
 
 

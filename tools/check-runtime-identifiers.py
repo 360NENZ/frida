@@ -114,6 +114,8 @@ def remaining_identifiers(contents: bytes) -> list[str]:
         text = match.group()
         if b"frida" in text.lower() and text.lower() != b"friday":
             remaining.add(text[:160].decode("ascii") + ("..." if len(text) > 160 else ""))
+        for type_name in re.finditer(rb"Meshlink[A-Z][A-Za-z0-9_]*", text):
+            remaining.add(type_name.group().decode("ascii"))
     for encoding, pattern in (
         ("utf-16-le", rb"(?:[\x20-\x7e]\x00){5,}"),
         ("utf-16-be", rb"(?:\x00[\x20-\x7e]){5,}"),
@@ -122,6 +124,7 @@ def remaining_identifiers(contents: bytes) -> list[str]:
             text = match.group().decode(encoding)
             if "frida" in text.lower() and text.lower() != "friday":
                 remaining.add(text[:160] + ("..." if len(text) > 160 else ""))
+            remaining.update(re.findall(r"Meshlink[A-Z][A-Za-z0-9_]*", text))
     return sorted(remaining)
 
 

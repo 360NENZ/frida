@@ -196,7 +196,7 @@ jobs:
         run: |
           git submodule update --init releng
           git -C releng submodule update --init
-          python tools/ensure-submodules.py frida-core frida-python frida-tools
+          python tools/ensure-submodules.py frida-gum frida-core frida-python frida-tools
           python -m pip install setuptools
       - name: Test Valac task name rewriter
         run: python -m unittest releng.tests.test_neutral_valac

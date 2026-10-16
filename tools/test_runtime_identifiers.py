@@ -20,6 +20,7 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
             b"cert-worker\x00helper-factory\x00usb-worker\x00"
             b"pulse-reader\x00app-launch\x00"
             b"/_meshlink_worker_runtime.js\x00"
+            b"/meshlink/bootstrap.js\x00"
         )
         self.assertIn("meshlink-worker", remaining)
         self.assertIn("main-worker", remaining)
@@ -30,6 +31,7 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
         for name in ("cert-worker", "helper-factory", "usb-worker", "pulse-reader", "app-launch"):
             self.assertIn(name, remaining)
         self.assertIn("/_meshlink_worker_runtime.js", remaining)
+        self.assertIn("/meshlink/bootstrap.js", remaining)
         self.assertIn("frida", remaining)
         self.assertIn("FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa", remaining)
         self.assertIn("FRIDA_1.0", remaining)

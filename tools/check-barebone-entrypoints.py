@@ -19,8 +19,14 @@ user_sources = {
 host_session = (
     workspace / "subprojects/frida-core/src/barebone/barebone-host-session.vala"
 ).read_text(encoding="utf-8")
+script = (workspace / "subprojects/frida-core/src/barebone/script.vala").read_text(
+    encoding="utf-8"
+)
 makefile = (root / "linux/Makefile").read_text(encoding="utf-8")
 workflow = (workspace / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+
+assert 'script.add_program (runtime_js, "/" + Uuid.string_random () + ".js")' in script
+assert '"/meshlink/bootstrap.js"' not in script
 
 for source in (linux, macos, rust, xnu, makefile, workflow):
     assert not re.search(r"\bfrida_agent_(?:start|stop|wake|init|private|heap|relocs|disc)", source)

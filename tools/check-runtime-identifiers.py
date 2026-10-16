@@ -95,6 +95,7 @@ LEGACY_MARKERS = (
     b"pulse-reader",
     b"app-launch",
     b"/_meshlink_worker_runtime.js",
+    b"/meshlink/bootstrap.js",
 )
 
 

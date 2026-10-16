@@ -96,6 +96,7 @@ LEGACY_MARKERS = (
     b"app-launch",
     b"/_meshlink_worker_runtime.js",
     b"/meshlink/bootstrap.js",
+    b"meshlink:rpc",
 )
 
 

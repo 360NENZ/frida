@@ -129,10 +129,22 @@ jobs:
             -p '/GumJS/Script/Worker/worker_rpc_should_be_supported#QJS'
           build/subprojects/frida-gum/tests/gum-tests -m slow \
             -p '/GumJS/Script/Worker/worker_termination_should_be_supported#QJS'
+          build/subprojects/frida-gum/tests/gum-tests -m slow \
+            -p '/GumJS/Script/RPC/method_can_be_called_sync#QJS'
+          build/subprojects/frida-gum/tests/gum-tests -m slow \
+            -p '/GumJS/Script/RPC/method_can_be_called_sync#V8'
+          build/subprojects/frida-gum/tests/gum-tests -m slow \
+            -p '/GumJS/Script/RPC/non_rpc_array_should_reach_user_script#QJS'
           build/subprojects/frida-core/tests/frida-tests -m slow -p /Compiler/Performance/build-simple-agent
           build/subprojects/frida-core/tests/frida-tests -m slow -p /Compiler/LanguageServer/complete-simple-agent
       - name: Install
         run: make install
+      - name: Test Go client binding
+        run: |
+          git submodule update --init --depth 1 subprojects/frida-go
+          export PKG_CONFIG_PATH="${{ runner.temp }}/frida/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
+          cd subprojects/frida-go
+          go test ./frida -run TestGetRPCResponse -count=1
       - name: Collect binaries
         run: |
           mkdir -p dist

@@ -17,11 +17,15 @@ def check_sync():
         session = device.attach(pid)
         try:
             script = session.create_script(
+                "send(['unclaimed', 'ok', 3]); "
                 "rpc.exports = { add(a, b) { return a + b; }, "
                 "async twice(value) { return value * 2; } };"
             )
+            messages = []
+            script.on("message", lambda message, data: messages.append(message))
             script.load()
             device.resume(pid)
+            assert any(message.get("payload") == ["unclaimed", "ok", 3] for message in messages), messages
             assert sorted(script.list_exports_sync()) == ["add", "twice"]
             assert script.exports_sync.add(2, 3) == 5
         finally:

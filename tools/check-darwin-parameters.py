@@ -1,3 +1,4 @@
+import plistlib
 from pathlib import Path
 
 
@@ -70,6 +71,25 @@ for name in (
 ):
     assert f"relay_gadget_environment_{name} (" in darwin_gadget, name
 assert "frida_gadget_environment_" not in darwin_gadget
+
+for name, identifier in (
+    ("server/frida-server.plist", "io.meshlink.Server"),
+    ("src/darwin/frida-helper.plist", "io.meshlink.Helper"),
+):
+    info = plistlib.loads((ROOT / "subprojects/frida-core" / name).read_bytes())
+    assert info["CFBundleIdentifier"] == identifier
+    assert info["CFBundleName"] == "Meshlink"
+
+server_entitlements = plistlib.loads(
+    (ROOT / "subprojects/frida-core/server/frida-server.xcent").read_bytes()
+)
+assert server_entitlements["application-identifier"] == "io.meshlink.Server"
+assert 'Environment.get_variable ("MESHLINK_DTRACE_PREDICATE")' in (
+    ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend.vala"
+).read_text(encoding="utf-8")
+assert "identity = 'MeshlinkAgent'" in (
+    ROOT / "subprojects/frida-core/lib/agent/meson.build"
+).read_text(encoding="utf-8")
 
 code_segment = (ROOT / "subprojects/frida-gum/gum/backend-darwin/gumcodesegment-darwin.c").read_text(encoding="utf-8")
 assert 'gum_file_open_tmp ("io-XXXXXX.dylib", &dylib_path)' in code_segment

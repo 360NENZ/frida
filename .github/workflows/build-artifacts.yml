@@ -426,6 +426,9 @@ jobs:
     runs-on: macos-15
     env:
       MACOS_CERTID: "-"
+      OBJCFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
+        -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
       CFLAGS: >-
         -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
         -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
@@ -479,6 +482,9 @@ jobs:
           gadget="$(find "${{ runner.temp }}/frida-macos/lib" -name 'meshlink-gadget.dylib' -print -quit)"
           test -n "$gadget"
           cp "$gadget" dist/libmeshlink.dylib
+          strip -Sx dist/meshlinkd
+          codesign -f -s "-" -i io.meshlink.Server dist/meshlinkd
+          codesign --verify dist/meshlinkd
           dist/meshlinkd --version
       - name: Verify runtime identifiers
         run: python3 tools/check-runtime-identifiers.py dist/meshlinkd dist/libmeshlink.dylib

@@ -91,6 +91,10 @@ assert 'Environment.get_variable ("MESHLINK_DTRACE_PREDICATE")' in (
 assert "identity = runtime_type_prefix + 'Agent'" in (
     ROOT / "subprojects/frida-core/lib/agent/meson.build"
 ).read_text(encoding="utf-8")
+gadget_build = (ROOT / "subprojects/frida-core/lib/gadget/meson.build").read_text(encoding="utf-8")
+assert "identity = '@executable_path/../Frameworks/' + runtime_type_prefix + 'Gadget.dylib'" in gadget_build
+assert "identity = '@executable_path/Frameworks/' + runtime_type_prefix + 'Gadget.dylib'" in gadget_build
+assert "MeshlinkGadget.dylib" not in gadget_build
 
 helper_backend = (ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend.vala").read_text(encoding="utf-8")
 helper_glue = (ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend-glue.m").read_text(encoding="utf-8")

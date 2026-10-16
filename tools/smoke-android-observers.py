@@ -15,6 +15,7 @@ LEGACY_THREADS = {
     "main-worker",
     "rpc-worker",
 }
+GLIB_THREADS = {"gmain", "gdbus", "pool", "pool-spawner"}
 
 
 def read_proc(serial: str, path: str) -> str:
@@ -33,8 +34,9 @@ def main() -> None:
     args = parser.parse_args()
 
     device = frida.get_device_manager().add_remote_device(args.address)
-    pid = device.spawn(["/system/bin/sleep", "60"])
+    pid = device.spawn(["/system/bin/sleep", "300"])
     try:
+        original_threads = set(read_proc(args.serial, f"/proc/{pid}/task/*/comm").splitlines())
         session = device.attach(pid)
         try:
             device.resume(pid)
@@ -46,7 +48,10 @@ def main() -> None:
                 try:
                     assert script.exports_sync.ping() == 1, runtime
                 finally:
-                    script.unload()
+                    try:
+                        script.unload()
+                    except frida.InvalidOperationError:
+                        pass
 
             maps = read_proc(args.serial, f"/proc/{pid}/maps")
             threads = read_proc(args.serial, f"/proc/{pid}/task/*/comm").splitlines()
@@ -58,6 +63,11 @@ def main() -> None:
             ), "Expected a session-specific agent memfd"
             assert not LEGACY_THREADS.intersection(threads), threads
             assert not any("frida" in name.lower() for name in threads), threads
+            new_threads = set(threads) - original_threads
+            assert not {
+                name for name in new_threads
+                if name in GLIB_THREADS or name.startswith("pool-")
+            }, threads
             print(f"Android pid {pid}: {len(threads)} threads, randomized agent mapping")
             print("Thread names:", ", ".join(threads))
         finally:

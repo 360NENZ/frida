@@ -5,7 +5,8 @@ import re
 root = Path(__file__).resolve().parent.parent
 compiler = (root / "subprojects/frida-core/src/compiler/compiler.vala").read_text(encoding="utf-8")
 
-assert 'MemoryFileDescriptor.from_bytes ("runtime-compiler.so"' in compiler
+assert 'MemoryFileDescriptor.from_bytes (Uuid.string_random () + ".so"' in compiler
+assert '"runtime-compiler.so"' not in compiler
 assert '"frida-compiler-backend.so"' not in compiler
 
 compiler_dir = root / "subprojects/frida-core/src/compiler"

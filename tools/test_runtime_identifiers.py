@@ -16,12 +16,14 @@ class RuntimeIdentifierCheckTest(unittest.TestCase):
             b"meshlink\x00frida\x00FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa\x00"
             b"FRIDA_1.0\x00/home/oleavr/src/frida-core/agent\x00js-event-loop\x00"
             b"agent-worker\x00io-worker\x00main-worker\x00meshlink-worker\x00"
+            b"runtime-compiler.so\x00"
         )
         self.assertIn("meshlink-worker", remaining)
         self.assertIn("main-worker", remaining)
         self.assertIn("agent-worker", remaining)
         self.assertIn("io-worker", remaining)
         self.assertIn("js-event-loop", remaining)
+        self.assertIn("runtime-compiler.so", remaining)
         self.assertIn("frida", remaining)
         self.assertIn("FRIDA_FRUITY_KCDATA_ITEM_TYPE_ARRAY_PADa", remaining)
         self.assertIn("FRIDA_1.0", remaining)

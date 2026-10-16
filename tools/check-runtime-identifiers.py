@@ -88,6 +88,7 @@ LEGACY_MARKERS = (
     b"FRIDA_V8_EXTRA_FLAGS",
     b"../subprojects/frida-core/",
     b"../subprojects/frida-gum/",
+    b"runtime-compiler.so",
 )
 
 

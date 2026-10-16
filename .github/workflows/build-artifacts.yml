@@ -169,6 +169,8 @@ jobs:
   windows-x86_64:
     if: ${{ !inputs.sdk }}
     runs-on: windows-latest
+    env:
+      LDFLAGS: /PDBALTPATH:runtime.pdb
     defaults:
       run:
         shell: pwsh

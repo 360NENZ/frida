@@ -39,5 +39,9 @@ for filename in sys.argv[1:]:
         assert marker.decode("ascii").encode("utf-16le") not in contents, (filename, marker)
     assert b"frida_adb_client_close\0" not in contents, filename
     assert re.search(rb"\.\./subprojects/frida-core/[^\0\r\n\"]+\.vala", contents) is None, filename
+    assert b"frida_service_context_free" not in contents, filename
+    assert b"subprojects/frida-core/src/libfrida-core.a.p/" not in contents, filename
+    for pdb in (b"frida-server-raw.pdb", b"frida-helper-raw.pdb", b"libml-agent.pdb"):
+        assert pdb not in contents, (filename, pdb)
 
 print("Windows helper service and injected blob names are neutral")

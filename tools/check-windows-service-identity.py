@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import sys
 
 
@@ -37,5 +38,6 @@ for filename in sys.argv[1:]:
         assert marker not in contents, (filename, marker)
         assert marker.decode("ascii").encode("utf-16le") not in contents, (filename, marker)
     assert b"frida_adb_client_close\0" not in contents, filename
+    assert re.search(rb"\.\./subprojects/frida-core/[^\0\r\n\"]+\.vala", contents) is None, filename
 
 print("Windows helper service and injected blob names are neutral")

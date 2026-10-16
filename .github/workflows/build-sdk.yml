@@ -135,7 +135,7 @@ jobs:
           if-no-files-found: error
 
   windows-x86_64-md:
-    if: ${{ inputs.windows_md_only }}
+    if: ${{ !inputs.macos_only && (!inputs.windows_only || inputs.windows_md_only) }}
     runs-on: windows-latest
     timeout-minutes: 180
     env:

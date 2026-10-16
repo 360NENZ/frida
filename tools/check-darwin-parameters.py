@@ -55,6 +55,22 @@ assert 'g_thread_new (worker_name, run_worker_loop, NULL)' in gadget_glue
 assert '"io-worker"' not in gadget_glue
 assert '"rpc-worker"' not in gadget_glue
 
+darwin_gadget = (ROOT / "subprojects/frida-core/lib/gadget/gadget-darwin.m").read_text(encoding="utf-8")
+for name in (
+    "detect_bundle_id",
+    "detect_bundle_name",
+    "detect_documents_dir",
+    "has_objc_class",
+    "set_thread_name",
+    "detect_darwin_location_fields",
+    "ensure_debugger_breakpoints_only",
+    "allow_stolen_breakpoints",
+    "break_and_resume",
+    "break_and_detach",
+):
+    assert f"relay_gadget_environment_{name} (" in darwin_gadget, name
+assert "frida_gadget_environment_" not in darwin_gadget
+
 code_segment = (ROOT / "subprojects/frida-gum/gum/backend-darwin/gumcodesegment-darwin.c").read_text(encoding="utf-8")
 assert 'gum_file_open_tmp ("io-XXXXXX.dylib", &dylib_path)' in code_segment
 assert '"frida-XXXXXX.dylib"' not in code_segment

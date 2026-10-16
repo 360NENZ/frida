@@ -437,6 +437,8 @@ jobs:
         run: python3 tools/check-injector-blob-names.py
       - name: Verify worker thread names
         run: python3 tools/check-worker-thread-names.py
+      - name: Verify zymbiote control socket name
+        run: python3 tools/check-zymbiote-socket-name.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Set up NDK

@@ -206,12 +206,33 @@ jobs:
       - name: Test Go client binding
         run: |
           git submodule update --init --depth 1 subprojects/frida-go
+          go_build="${{ runner.temp }}/frida-go-build"
+          go_prefix="${{ runner.temp }}/frida-go-prefix"
+          MESON_BUILD_ROOT="$go_build" ./configure \
+            --prefix="$go_prefix" \
+            --disable-server \
+            --disable-gadget \
+            --disable-inject \
+            --disable-graft-tool \
+            --disable-frida-python \
+            --disable-frida-tools \
+            -- \
+            -Dfrida-core:compiler_backend=disabled \
+            -Dfrida-core:compat=disabled
+          make -C "$go_build" -j"$(nproc)"
+          make -C "$go_build" install
           sdk="$GITHUB_WORKSPACE/deps/sdk-linux-x86_64"
-          export PKG_CONFIG_PATH="${{ runner.temp }}/frida/lib/x86_64-linux-gnu/pkgconfig:$sdk/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+          export PKG_CONFIG_PATH="$go_prefix/lib/x86_64-linux-gnu/pkgconfig:$sdk/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
           export CGO_CFLAGS="$(pkg-config --static --define-variable=frida_sdk_prefix="$sdk" --cflags frida-core-1.0)"
           export CGO_LDFLAGS="$(pkg-config --static --define-variable=frida_sdk_prefix="$sdk" --libs frida-core-1.0)"
           cd subprojects/frida-go
-          go test ./frida -run TestGetRPCResponse -count=1
+          if ! go test ./frida -run TestGetRPCResponse -count=1; then
+            go test -c -o "${{ runner.temp }}/frida-go-test" ./frida
+            if ! command -v gdb >/dev/null; then sudo apt-get install -y gdb; fi
+            gdb -batch -ex run -ex 'thread apply all bt 12' \
+              --args "${{ runner.temp }}/frida-go-test" -test.run TestGetRPCResponse
+            exit 1
+          fi
       - name: Type-check Node client binding
         if: success() || failure()
         run: |

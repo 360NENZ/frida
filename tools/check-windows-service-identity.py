@@ -30,6 +30,7 @@ for relative_path, names in (
 ):
     source = (root / "subprojects/frida-core" / relative_path).read_text(encoding="utf-8")
     assert '#include "runtime-type.h"' in source or '#include "../base/runtime-type.h"' in source
+    assert "MeshlinkWindows" not in source
     for name in names:
         assert f"typedef FridaWindows{name} FRIDA_RUNTIME_TYPE (Windows{name});" in source
         assert f"typedef FridaWindows{name}Class FRIDA_RUNTIME_TYPE (Windows{name}Class);" in source

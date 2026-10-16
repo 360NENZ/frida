@@ -8,6 +8,13 @@ native = (root / "src/barebone/agent/src/linux/native.rs").read_text(encoding="u
 name_module = (root / "src/barebone/agent/src/linux/thread_name.rs").read_text(encoding="utf-8")
 main_glue = (root / "src/frida-glue.c").read_text(encoding="utf-8")
 container = (root / "src/agent-container.vala").read_text(encoding="utf-8")
+agent = (root / "lib/agent/agent.vala").read_text(encoding="utf-8")
+linux_host = (root / "src/linux/linux-host-session.vala").read_text(encoding="utf-8")
+darwin_helper = (root / "src/darwin/frida-helper-service.vala").read_text(encoding="utf-8")
+gum_linux = (
+    Path(__file__).resolve().parent.parent
+    / "subprojects/frida-gum/gum/backend-linux/gumprocess-linux.c"
+).read_text(encoding="utf-8")
 
 assert "AGENT_THREAD_NAME" not in prospero
 assert "Uuid.string_random ().substring (0, 15)" in prospero
@@ -28,5 +35,16 @@ assert "thread_name[15] = '\\0';" in main_glue
 assert "g_thread_new (thread_name, run_main_loop, NULL)" in main_glue
 assert '"agent-container"' not in container
 assert "new Thread<bool> (Uuid.string_random ().substring (0, 15), run)" in container
+
+assert 'new Thread<void> (Uuid.string_random ().substring (0, 15), run_emulated_agent)' in agent
+assert '"emulated-worker"' not in agent
+assert 'new Thread<void> (Uuid.string_random ().substring (0, 15), run)' in linux_host
+assert '"android-worker"' not in linux_host
+assert 'new Thread<int> (Uuid.string_random ().substring (0, 15), () =>' in darwin_helper
+assert '"helper-worker"' not in darwin_helper
+assert "worker_name = g_uuid_string_random ();" in gum_linux
+assert "worker_name[15] = '\\0';" in gum_linux
+assert "g_thread_new (worker_name, gum_linux_handle_modify_thread_comms," in gum_linux
+assert '"gum-modify-thread-worker"' not in gum_linux
 
 print("Prospero, kernel, and core worker names are per-instance")

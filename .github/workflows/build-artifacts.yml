@@ -139,12 +139,6 @@ jobs:
           build/subprojects/frida-core/tests/frida-tests -m slow -p /Compiler/LanguageServer/complete-simple-agent
       - name: Install
         run: make install
-      - name: Test Go client binding
-        run: |
-          git submodule update --init --depth 1 subprojects/frida-go
-          export PKG_CONFIG_PATH="${{ runner.temp }}/frida/lib/x86_64-linux-gnu/pkgconfig:${PKG_CONFIG_PATH:-}"
-          cd subprojects/frida-go
-          go test ./frida -run TestGetRPCResponse -count=1
       - name: Collect binaries
         run: |
           mkdir -p dist
@@ -203,6 +197,15 @@ jobs:
           name: frida-client-linux-x86_64
           path: dist/frida-client-linux-x86_64.tar.gz
           if-no-files-found: error
+      - name: Test Go client binding
+        run: |
+          git submodule update --init --depth 1 subprojects/frida-go
+          sdk="$GITHUB_WORKSPACE/deps/sdk-linux-x86_64"
+          export PKG_CONFIG_PATH="${{ runner.temp }}/frida/lib/x86_64-linux-gnu/pkgconfig:$sdk/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+          export CGO_CFLAGS="$(pkg-config --static --define-variable=frida_sdk_prefix="$sdk" --cflags frida-core-1.0)"
+          export CGO_LDFLAGS="$(pkg-config --static --define-variable=frida_sdk_prefix="$sdk" --libs frida-core-1.0)"
+          cd subprojects/frida-go
+          go test ./frida -run TestGetRPCResponse -count=1
 
   windows-x86_64:
     if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}

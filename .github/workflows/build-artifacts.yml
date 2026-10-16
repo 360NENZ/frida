@@ -463,6 +463,13 @@ jobs:
           -Dfrida-core:compat=disabled
       - name: Compile
         run: make -j2
+      - name: Diagnose Gadget coroutine linkage
+        if: failure()
+        run: |
+          grep -R -n -C 3 --include='*.c' 'relay_gadget_perform_start_co' \
+            build/subprojects/frida-core/lib/gadget || true
+          nm -u build/subprojects/frida-core/lib/gadget/libml-gadget.dylib.p/meson-generated_gadget.c.o \
+            | grep 'gadget_perform_start' || true
       - name: Install
         run: make install
       - name: Collect binaries

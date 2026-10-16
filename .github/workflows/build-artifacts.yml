@@ -427,6 +427,7 @@ jobs:
     env:
       MACOS_CERTID: "-"
       OBJCFLAGS: >-
+        -ffile-prefix-map=../subprojects/frida-core/src/darwin/frida-helper-backend-glue.m=../subprojects/meshlink-core/src/darwin/helper-backend-glue.m
         -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
         -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum
       CFLAGS: >-

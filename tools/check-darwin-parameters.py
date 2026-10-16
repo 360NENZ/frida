@@ -1,4 +1,5 @@
 import plistlib
+import re
 from pathlib import Path
 
 
@@ -90,6 +91,32 @@ assert 'Environment.get_variable ("MESHLINK_DTRACE_PREDICATE")' in (
 assert "identity = 'MeshlinkAgent'" in (
     ROOT / "subprojects/frida-core/lib/agent/meson.build"
 ).read_text(encoding="utf-8")
+
+helper_backend = (ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend.vala").read_text(encoding="utf-8")
+helper_glue = (ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend-glue.m").read_text(encoding="utf-8")
+assert '[CCode (cname = "relay_darwin_helper_backend_inject_into_task")]' in helper_backend
+assert "relay_darwin_helper_backend_inject_into_task (" in helper_glue
+assert "FRIDA_MAX_BREAKPOINTS" not in helper_glue
+for legacy in (
+    "frida_agent_context_init",
+    "frida_convert_thread_state",
+    "frida_create_capstone",
+    "frida_find_function_end",
+    "frida_find_modinit_strcmp_checks",
+    "frida_find_run_initializers_call",
+    "frida_get_debug_state",
+    "frida_inject_instance_clone",
+    "frida_set_debug_state",
+    "frida_spawn_instance_create_dyld_data",
+    "frida_spawn_instance_disable_nth_breakpoint",
+    "frida_spawn_instance_handle_breakpoint",
+    "frida_spawn_instance_is_libc_initialized",
+    "frida_spawn_instance_set_libc_initialized",
+    "frida_spawn_instance_set_nth_breakpoint",
+    "frida_spawn_instance_unset_helpers",
+    "frida_spawn_instance_unset_nth_breakpoint",
+):
+    assert re.search(rf"\b{re.escape(legacy)}\b", helper_glue) is None, legacy
 
 code_segment = (ROOT / "subprojects/frida-gum/gum/backend-darwin/gumcodesegment-darwin.c").read_text(encoding="utf-8")
 assert 'gum_file_open_tmp ("io-XXXXXX.dylib", &dylib_path)' in code_segment

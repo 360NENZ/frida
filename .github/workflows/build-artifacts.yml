@@ -20,6 +20,10 @@ on:
         description: Build only the Windows MD SDK
         type: boolean
         default: false
+      artifacts_macos_only:
+        description: Build only macOS runtime artifacts
+        type: boolean
+        default: false
 
 jobs:
   sdk:
@@ -31,7 +35,7 @@ jobs:
       windows_md_only: ${{ inputs.sdk_windows_md_only }}
 
   linux-x86_64:
-    if: ${{ !inputs.sdk }}
+    if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}
     runs-on: ubuntu-latest
     env:
       CFLAGS: >-
@@ -187,7 +191,7 @@ jobs:
           if-no-files-found: error
 
   windows-x86_64:
-    if: ${{ !inputs.sdk }}
+    if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}
     runs-on: windows-latest
     env:
       LDFLAGS: /PDBALTPATH:runtime.pdb
@@ -336,7 +340,7 @@ jobs:
           if-no-files-found: error
 
   android-arm64:
-    if: ${{ !inputs.sdk }}
+    if: ${{ !inputs.sdk && !inputs.artifacts_macos_only }}
     runs-on: ubuntu-latest
     env:
       CFLAGS: >-
@@ -421,6 +425,7 @@ jobs:
     if: ${{ !inputs.sdk }}
     runs-on: macos-15
     env:
+      MACOS_CERTID: "-"
       CFLAGS: >-
         -ffile-prefix-map=../subprojects/frida-core=../subprojects/meshlink-core
         -ffile-prefix-map=../subprojects/frida-gum=../subprojects/meshlink-gum

@@ -16,6 +16,10 @@ on:
         description: Build only the macOS SDK
         type: boolean
         default: false
+      sdk_windows_md_only:
+        description: Build only the Windows MD SDK
+        type: boolean
+        default: false
 
 jobs:
   sdk:
@@ -24,6 +28,7 @@ jobs:
     with:
       windows_only: ${{ inputs.sdk_windows_only }}
       macos_only: ${{ inputs.sdk_macos_only }}
+      windows_md_only: ${{ inputs.sdk_windows_md_only }}
 
   linux-x86_64:
     if: ${{ !inputs.sdk }}

@@ -220,6 +220,18 @@ jobs:
         run: .\make install
       - name: Verify installed Windows helper identity
         run: python tools/check-windows-service-identity.py "$Env:RUNNER_TEMP\frida\bin\frida-server.exe"
+      - name: Package Windows server
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item "$Env:RUNNER_TEMP\frida\bin\frida-server.exe" dist\meshlinkd.exe
+          .\dist\meshlinkd.exe --version
+          if ($LASTEXITCODE -ne 0) { throw "Packaged Windows server failed to start" }
+      - name: Upload Windows server
+        uses: actions/upload-artifact@v4
+        with:
+          name: meshlink-server-windows-x86_64
+          path: dist/meshlinkd.exe
+          if-no-files-found: error
       - name: Package matched client
         run: |
           $prefix = "$Env:RUNNER_TEMP\frida"

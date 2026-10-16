@@ -204,6 +204,11 @@ jobs:
         run: python tools/check-injector-blob-names.py
       - name: Verify worker thread names
         run: python tools/check-worker-thread-names.py
+      - name: Configure native source diagnostics
+        run: |
+          $header = "$Env:GITHUB_WORKSPACE\tools\windows-source-name.h".Replace('\', '/')
+          "CFLAGS=/FI$header" >> $Env:GITHUB_ENV
+          "CXXFLAGS=/FI$header" >> $Env:GITHUB_ENV
       - name: Configure
         run: >-
           .\configure
@@ -216,6 +221,12 @@ jobs:
           "-Dfrida-core:compiler_backend=disabled"
           "-Dfrida-core:compat=disabled"
           "-Dfrida-core:tests=disabled"
+      - name: Show configure diagnostics
+        if: failure()
+        run: |
+          if (Test-Path build\meson-logs\meson-log.txt) {
+            Get-Content build\meson-logs\meson-log.txt | Select-Object -Last 120
+          }
       - name: Compile
         run: .\make
       - name: Install
@@ -234,6 +245,8 @@ jobs:
           name: meshlink-server-windows-x86_64
           path: dist/meshlinkd.exe
           if-no-files-found: error
+      - name: Verify Windows server runtime identifiers
+        run: python tools/check-runtime-identifiers.py dist/meshlinkd.exe
       - name: Package matched client
         run: |
           $prefix = "$Env:RUNNER_TEMP\frida"

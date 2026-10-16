@@ -44,6 +44,7 @@ def main() -> None:
     device = frida.get_device_manager().add_remote_device(args.address)
     pid = device.spawn(["/system/bin/sleep", "300"])
     try:
+        original_maps = read_proc(args.serial, f"/proc/{pid}/maps")
         original_threads = set(read_proc(args.serial, f"/proc/{pid}/task/*/comm").splitlines())
         original_fds = read_fd_targets(args.serial, pid)
         session = device.attach(pid)
@@ -67,10 +68,12 @@ def main() -> None:
             new_fds = read_fd_targets(args.serial, pid) - original_fds
 
             assert not re.search(r"frida", maps, re.IGNORECASE), "Legacy module path in maps"
-            assert re.search(
-                r"/memfd:[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}-(?:32|64|arm|arm64)\.so",
-                maps,
-            ), "Expected a session-specific agent memfd"
+            new_memfds = set(re.findall(r"/memfd:[^\s]+", maps)) - set(
+                re.findall(r"/memfd:[^\s]+", original_maps)
+            )
+            assert any(re.fullmatch(r"/memfd:[0-9a-f]{12,28}", name) for name in new_memfds), (
+                "Expected an opaque agent memfd", new_memfds
+            )
             assert not LEGACY_THREADS.intersection(threads), threads
             assert not any("frida" in name.lower() for name in threads), threads
             new_threads = set(threads) - original_threads

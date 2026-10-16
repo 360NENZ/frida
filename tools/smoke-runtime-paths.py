@@ -12,6 +12,7 @@ if not command:
 device = frida.get_device_manager().add_remote_device(address)
 pid = device.spawn(command)
 try:
+    original_maps = Path(f"/proc/{pid}/maps").read_text(encoding="utf-8") if sys.platform == "linux" else ""
     session = device.attach(pid)
     try:
         device.resume(pid)
@@ -39,10 +40,12 @@ try:
         if sys.platform == "linux":
             maps = Path(f"/proc/{pid}/maps").read_text(encoding="utf-8")
             assert not re.search(r"/memfd:runtime-(?:32|64|arm|arm64)\.so", maps)
-            assert re.search(
-                r"/memfd:[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}-(?:32|64)\.so",
-                maps,
-            ), "Expected a session-specific agent memfd"
+            new_memfds = set(re.findall(r"/memfd:[^\s]+", maps)) - set(
+                re.findall(r"/memfd:[^\s]+", original_maps)
+            )
+            assert any(re.fullmatch(r"/memfd:[0-9a-f]{12,28}", name) for name in new_memfds), (
+                "Expected an opaque agent memfd", new_memfds
+            )
     finally:
         session.detach()
 finally:

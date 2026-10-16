@@ -441,6 +441,8 @@ jobs:
         run: python3 tools/check-zymbiote-socket-name.py
       - name: Verify Android helper identity
         run: python3 tools/check-android-helper-identity.py
+      - name: Verify helper resource names
+        run: python3 tools/check-helper-resource-names.py
       - name: Test Valac task name rewriter
         run: python3 -m unittest releng.tests.test_neutral_valac
       - name: Set up NDK

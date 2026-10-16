@@ -19,14 +19,22 @@ assert "blob%u.dll" not in injector
 
 build = (root / "subprojects/frida-core/meson.build").read_text(encoding="utf-8")
 assert "if host_os_family == 'windows' and not is_shared\n  add_project_arguments('-DVALA_EXTERN=extern', language: 'c')" in build
+assert "frida_component_cflags += '-DFRIDA_RUNTIME_TYPE_PREFIX=' + runtime_type_prefix" in build
+
+runtime_type = (root / "subprojects/frida-core/lib/base/runtime-type.h").read_text(encoding="utf-8")
+assert "#define FRIDA_RUNTIME_TYPE(name) FRIDA_RUNTIME_TYPE_EXPAND(FRIDA_RUNTIME_TYPE_PREFIX, name)" in runtime_type
 
 for relative_path, names in (
     ("lib/base/windows-glue.c", ("HandleStream", "HandleInputStream", "HandleOutputStream")),
     ("lib/pipe/pipe-windows.c", ("PipeInputStream", "PipeOutputStream")),
 ):
     source = (root / "subprojects/frida-core" / relative_path).read_text(encoding="utf-8")
+    assert '#include "runtime-type.h"' in source or '#include "../base/runtime-type.h"' in source
     for name in names:
-        assert f"G_DEFINE_TYPE (MeshlinkWindows{name}," in source
+        assert f"typedef FridaWindows{name} FRIDA_RUNTIME_TYPE (Windows{name});" in source
+        assert f"typedef FridaWindows{name}Class FRIDA_RUNTIME_TYPE (Windows{name}Class);" in source
+        assert f"G_DEFINE_TYPE (FRIDA_RUNTIME_TYPE (Windows{name})," in source
+        assert f"G_DEFINE_TYPE (MeshlinkWindows{name}," not in source
         assert f"G_DEFINE_TYPE (FridaWindows{name}," not in source
 
 for filename in sys.argv[1:]:

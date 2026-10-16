@@ -88,7 +88,7 @@ assert server_entitlements["application-identifier"] == "io.meshlink.Server"
 assert 'Environment.get_variable ("MESHLINK_DTRACE_PREDICATE")' in (
     ROOT / "subprojects/frida-core/src/darwin/frida-helper-backend.vala"
 ).read_text(encoding="utf-8")
-assert "identity = 'MeshlinkAgent'" in (
+assert "identity = runtime_type_prefix + 'Agent'" in (
     ROOT / "subprojects/frida-core/lib/agent/meson.build"
 ).read_text(encoding="utf-8")
 
